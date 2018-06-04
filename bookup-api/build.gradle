@@ -1,0 +1,17 @@
+jar {
+	baseName = 'bookup-api'
+	version = '0.0.1'
+}
+
+dependencies {
+    compile project(':bookup-service')
+    compile project(':bookup-domain')
+    compile project(':bookup-document')
+
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-hateoas')
+    compile('org.springframework.boot:spring-boot-starter-mail')
+//    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-social-facebook')
+    compile('org.springframework.boot:spring-boot-starter-web')
+}

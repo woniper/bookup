@@ -1,0 +1,72 @@
+allprojects {
+    group 'net.woniper'
+    version '0.0.1'
+
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'spring-boot'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+}
+
+springBoot {
+    mainClass = 'net.woniper.bookup.BookUPApplication'
+}
+
+buildscript {
+    ext {
+        springBootVersion = '1.3.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'spring-boot'
+    apply plugin: 'application'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    mainClassName = 'net.woniper.bookup.BookUPApplication'
+
+    buildscript()
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile('org.springframework.boot:spring-boot-devtools')
+        compile('org.projectlombok:lombok:1.16.6')
+        compile('org.modelmapper:modelmapper:0.7.5')
+//        compile('commons-lang:commons-lang:2.6')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':bookup-api')
+    compile project(':bookup-service')
+    compile project(':bookup-domain')
+    compile project(':bookup-document')
+    compile project(':bookup-front')
+}
+
+eclipse {
+    classpath {
+        containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+        containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+    }
+}

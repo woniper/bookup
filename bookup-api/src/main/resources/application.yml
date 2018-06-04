@@ -1,0 +1,123 @@
+bookup:
+  crawler:
+    aladin.url: http://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=UsedStore&SearchWord=%s
+    kyobo:
+      url: http://mkiosk.kyobobook.co.kr/kiosk/search/searchMain.ink?site=%d&isbn=%s
+      storeDataList:
+      -
+        storeName: "교보문고 : 광화문점"
+        storeId: 01
+      -
+        storeName: "교보문고 : 강남점"
+        storeId: 15
+      -
+        storeName: "교보문고 : 잠실점"
+        storeId: 29
+      -
+        storeName: "교보문고 : 목동점"
+        storeId: 33
+      -
+        storeName: "교보문고 : 영등포점"
+        storeId: 36
+      -
+        storeName: "교보문고 : 합정점"
+        storeId: 49
+      -
+        storeName: "교보문고 : 디큐브시티 바로드림센터"
+        storeId: 66
+      -
+        storeName: "교보문고 : 수유 바로드림센터"
+        storeId: 68
+      -
+        storeName: "교보문고 : 동대문 바로드림센터"
+        storeId: 41
+      -
+        storeName: "교보문고 : 은평 바로드림센터"
+        storeId: 46
+      -
+        storeName: "교보문고 : 청량리 바로드림센터"
+        storeId: 56
+      -
+        storeName: "교보문고 : 가든파이브 바로드림센터"
+        storeId: 58
+      -
+        storeName: "교보문고 : 부천점"
+        storeId: 13
+      -
+        storeName: "교보문고 : 인천점"
+        storeId: 25
+      -
+        storeName: "교보문고 : 천안점"
+        storeId: 34
+      -
+        storeName: "교보문고 : 일산점"
+        storeId: 38
+      -
+        storeName: "교보문고 : 평촌점"
+        storeId: 57
+      -
+        storeName: "교보문고 : 판교 바로드림센터"
+        storeId: 69
+      -
+        storeName: "교보문고 : 송도 바로드림센터"
+        storeId: 42
+      -
+        storeName: "교보문고 : 광교 센터"
+        storeId: 52
+      -
+        storeName: "교보문고 : 대구점"
+        storeId: 04
+      -
+        storeName: "교보문고 : 부산점"
+        storeId: 05
+      -
+        storeName: "교보문고 : 해운대 바로드림센터"
+        storeId: 43
+      -
+        storeName: "교보문고 : 창원점"
+        storeId: 28
+      -
+        storeName: "교보문고 : 울산점"
+        storeId: 39
+      -
+        storeName: "교보문고 : 대전점"
+        storeId: 02
+      -
+        storeName: "교보문고 : 전주 바로드림센터"
+        storeId: 31
+      -
+        storeName: "교보문고 : 반월당 바로드림센터"
+        storeId: 44
+      -
+        storeName: "교보문고 : 센텀시티점"
+        storeId: 45
+      -
+        storeName: "교보문고 : 칠곡 센터"
+        storeId: 48
+      -
+        storeName: "교보문고 : 세종 바로드림센터"
+        storeId: 24
+      -
+        storeName: "교보문고 : 경성대·부경대 센터"
+        storeId: 59
+      -
+        storeName: "교보문고 : 서울대점"
+        storeId: 72
+      -
+        storeName: "교보문고 : 이화여대점"
+        storeId: 74
+      -
+        storeName: "교보문고 : 숙명여대점"
+        storeId: 80
+      -
+        storeName: "교보문고 : 가천대점"
+        storeId: 79
+      -
+        storeName: "교보문고 : 성균관대점"
+        storeId: 86
+      -
+        storeName: "교보문고 : 포항공대점"
+        storeId: 75
+      -
+        storeName: "교보문고 : 전북대점"
+        storeId: 77
