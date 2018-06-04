@@ -1,4 +1,0 @@
-rootProject.name = 'bookup'
-include('bookup-api', 'bookup-service',
-        'bookup-domain', 'bookup-rest-repository',
-        'bookup-front', 'bookup-document')

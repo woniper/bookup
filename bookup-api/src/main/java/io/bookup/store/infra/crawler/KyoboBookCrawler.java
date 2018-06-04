@@ -2,6 +2,7 @@ package io.bookup.store.infra.crawler;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -46,7 +47,10 @@ public class KyoboBookCrawler implements BookCrawler {
         if(hasNotBook(bookStores)) return null;
 
         try {
-            Element body = bookStores.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("empty kyobo html body")).getBodyElement();
+            Element body = bookStores.stream()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("empty kyobo html body"))
+                    .getBodyElement();
             Elements bookElements = getBookElements(body);
             Elements bookModElements = getBookModElements(bookElements);
             Element bookElement = getBookElement(bookModElements);
@@ -55,7 +59,7 @@ public class KyoboBookCrawler implements BookCrawler {
             String description = bookElement.getElementsByClass(HTML_CLASS_NAME_WRITER).first().text();
 
             return new Book(title, description, findBookStores(bookStores));
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             log.error("not found kyobo book");
             return null;
         }
@@ -78,7 +82,7 @@ public class KyoboBookCrawler implements BookCrawler {
                     findBookStores.add(new BookStore(bookStore.getStoreName(), bookStore.getUrl()));
                 }
             }
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             log.error("not found kyobo book");
             return BookStore.EMPTY_LIST;
         }
@@ -113,7 +117,7 @@ public class KyoboBookCrawler implements BookCrawler {
 
     private Elements getBookModElements(Elements bookElements) {
         Elements bookModElements = bookElements.first().getElementsByClass(HTML_CLASS_NAME_BOOK_MOD);
-        Assert.notEmpty(bookElements, "not found kyobo BookModElements");
+        Assert.notEmpty(bookModElements, "not found kyobo BookModElements");
         return bookModElements;
     }
 
@@ -127,7 +131,11 @@ public class KyoboBookCrawler implements BookCrawler {
         return properties.getStoreDataList().stream()
                 .map(x -> {
                     String url = createUrl(x.getStoreId(), isbn);
-                    return new KyoboBookStoreRequestCommand(x.getStoreName(), url, body(restTemplate, url));
+                    return new KyoboBookStoreRequestCommand(
+                            x.getStoreName(),
+                            url,
+                            CompletableFuture.supplyAsync(() -> body(restTemplate, url))
+                    );
                 })
                 .collect(Collectors.toList());
     }
@@ -141,12 +149,22 @@ public class KyoboBookCrawler implements BookCrawler {
 
         private final String storeName;
         private final String url;
-        private final Element bodyElement;
+        private final CompletableFuture<Element> bodyElement;
 
-        KyoboBookStoreRequestCommand(String storeName, String url, Element bodyElement) {
+        KyoboBookStoreRequestCommand(String storeName, String url, CompletableFuture<Element> bodyElement) {
             this.storeName = storeName;
             this.url = url;
             this.bodyElement = bodyElement;
+        }
+
+        Element getBodyElement() {
+            try {
+                return bodyElement.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
     }
 }
