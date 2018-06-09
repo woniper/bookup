@@ -1,25 +1,27 @@
-package io.bookup.store.infra.crawler;
+package io.bookup.book.infra.crawler;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * @author woniper
  */
-@AllArgsConstructor
 @Getter
 public class BookStore {
 
     @JsonIgnore
-    public static final Collection<BookStore> EMPTY_LIST = Collections.emptySet();
+    public static final Collection<BookStore> EMPTY = Collections.emptySet();
 
     private String storeName;
     private String href;
+
+    BookStore(String storeName, String href) {
+        this.storeName = storeName;
+        this.href = href;
+    }
 
     @Override
     public boolean equals(Object o) {

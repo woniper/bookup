@@ -1,10 +1,9 @@
-package io.bookup.store.api;
+package io.bookup.book.api;
 
-import io.bookup.store.app.BookFindAppService;
-import io.bookup.store.infra.crawler.Book;
+import io.bookup.book.app.BookFindAppService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -19,9 +18,8 @@ public class BookFindController {
         this.bookFindAppService = bookFindAppService;
     }
 
-    @GetMapping(value = "/books", params = "isbn")
-    public ResponseEntity<?> findBooks(@RequestParam("isbn") String isbn) {
-        Book book = bookFindAppService.findByIsbn(isbn);
-        return ResponseEntity.ok(book);
+    @GetMapping(value = "/books/{isbn}")
+    public ResponseEntity<?> findBooks(@PathVariable("isbn") String isbn) {
+        return ResponseEntity.ok(bookFindAppService.getBook(isbn));
     }
 }

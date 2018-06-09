@@ -1,4 +1,4 @@
-package io.bookup.store.infra.crawler;
+package io.bookup.book.infra.crawler;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
-package io.bookup.store.app;
+package io.bookup.book.app;
 
-import io.bookup.store.infra.crawler.AladinBookCrawler;
-import io.bookup.store.infra.crawler.Book;
-import io.bookup.store.infra.crawler.BookCrawlerComposite;
-import io.bookup.store.infra.crawler.KyoboBookCrawler;
+import io.bookup.book.infra.crawler.AladinBookCrawler;
+import io.bookup.book.infra.crawler.Book;
+import io.bookup.book.infra.crawler.BookCrawlerComposite;
+import io.bookup.book.infra.crawler.KyoboBookCrawler;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,7 +23,7 @@ public class BookFindAppService {
                 .addBookCrawler(kyoboBookCrawler);
     }
 
-    public Book findByIsbn(String isbn) {
+    public Book getBook(String isbn) {
         return bookCrawler.findByIsbn(isbn);
     }
 

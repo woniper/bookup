@@ -1,4 +1,4 @@
-package io.bookup.store.infra.crawler;
+package io.bookup.book.infra.crawler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookCrawlerComposite implements BookCrawler {
 
-    private List<BookCrawler> bookCrawlers = new ArrayList<>();
+    private final List<BookCrawler> bookCrawlers = new ArrayList<>();
 
     public BookCrawlerComposite addBookCrawler(BookCrawler bookCrawler) {
         this.bookCrawlers.add(bookCrawler);

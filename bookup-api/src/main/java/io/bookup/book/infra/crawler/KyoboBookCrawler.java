@@ -1,10 +1,10 @@
-package io.bookup.store.infra.crawler;
+package io.bookup.book.infra.crawler;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
@@ -21,21 +21,23 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class KyoboBookCrawler implements BookCrawler {
 
-    @Value("${bookup.crawler.kyobo.url}")
-    private String url;
+    private final String HTML_CLASS_NAME_TITLE = "title";
+    private final String HTML_CLASS_NAME_WRITER = "writer";
+    private final String HTML_CLASS_NAME_BK_BOOK = "bk_book";
+    private final String HTML_CLASS_NAME_BOOK_MOD = "book_mod";
+    private final String HTML_CLASS_NAME_KY_BOOK_LIST = "ky_book_list";
+    private final String HTML_CLASS_NAME_BK_STOCK = "bk_stock";
+    private final String HTML_CLASS_NAME_TOTAL = "total";
 
-    private final static String HTML_CLASS_NAME_TITLE = "title";
-    private final static String HTML_CLASS_NAME_WRITER = "writer";
-    private final static String HTML_CLASS_NAME_BK_BOOK = "bk_book";
-    private final static String HTML_CLASS_NAME_BOOK_MOD = "book_mod";
-    private final static String HTML_CLASS_NAME_KY_BOOK_LIST = "ky_book_list";
-    private final static String HTML_CLASS_NAME_BK_STOCK = "bk_stock";
-    private final static String HTML_CLASS_NAME_TOTAL = "total";
-
+    private final String url;
     private final RestTemplate restTemplate;
     private final KyoboProperties properties;
 
-    public KyoboBookCrawler(RestTemplate restTemplate, KyoboProperties properties) {
+    public KyoboBookCrawler(@Value("${bookup.crawler.kyobo.url}") String url,
+                            RestTemplate restTemplate,
+                            KyoboProperties properties) {
+
+        this.url = url;
         this.restTemplate = restTemplate;
         this.properties = properties;
     }
@@ -44,47 +46,43 @@ public class KyoboBookCrawler implements BookCrawler {
     public Book findByIsbn(String isbn) {
         Collection<KyoboBookStoreRequestCommand> bookStores = getBookStoreRequestCommandList(isbn);
 
-        if(hasNotBook(bookStores)) return null;
+        if (hasNotBook(bookStores)) return null;
 
-        try {
-            Element body = bookStores.stream()
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("empty kyobo html body"))
-                    .getBodyElement();
-            Elements bookElements = getBookElements(body);
-            Elements bookModElements = getBookModElements(bookElements);
-            Element bookElement = getBookElement(bookModElements);
+        Optional<KyoboBookStoreRequestCommand> requestCommand = bookStores.stream().findFirst();
 
-            String title = bookElement.getElementsByClass(HTML_CLASS_NAME_TITLE).first().text();
-            String description = bookElement.getElementsByClass(HTML_CLASS_NAME_WRITER).first().text();
-
-            return new Book(title, description, findBookStores(bookStores));
-        } catch (Exception ex) {
-            log.error("not found kyobo book");
+        if (!requestCommand.isPresent()) {
             return null;
         }
+
+        Elements bookElements = getBookElements(requestCommand.get().getBodyElement());
+        Elements bookModElements = getBookModElements(bookElements);
+        Element bookElement = getBookElement(bookModElements);
+        return new Book(getTitle(bookElement), getDescription(bookElement), findBookStores(bookStores));
+    }
+
+    private String getTitle(Element element) {
+        return element.getElementsByClass(HTML_CLASS_NAME_TITLE).first().text();
+    }
+
+    private String getDescription(Element element) {
+        return element.getElementsByClass(HTML_CLASS_NAME_WRITER).first().text();
     }
 
     private Collection<BookStore> findBookStores(Collection<KyoboBookStoreRequestCommand> bookStores) {
-        if(hasNotBook(bookStores)) return BookStore.EMPTY_LIST;
+        if (hasNotBook(bookStores)) return BookStore.EMPTY;
 
         Collection<BookStore> findBookStores = new HashSet<>();
 
-        try {
-            for (KyoboBookStoreRequestCommand bookStore : bookStores) {
-                Element bodyElement = bookStore.getBodyElement();
-                Elements bookElements = getBookElements(bodyElement);
-                Elements bookModElements = getBookModElements(bookElements);
-                Element bookStockElement = getBookStockElement(bookModElements);
-                Element totalElement = getTotalElement(bookStockElement);
+        for (KyoboBookStoreRequestCommand bookStore : bookStores) {
+            Element bodyElement = bookStore.getBodyElement();
+            Elements bookElements = getBookElements(bodyElement);
+            Elements bookModElements = getBookModElements(bookElements);
+            Element bookStockElement = getBookStockElement(bookModElements);
+            Element totalElement = getTotalElement(bookStockElement);
 
-                if (isDigit(totalElement.text())) {
-                    findBookStores.add(new BookStore(bookStore.getStoreName(), bookStore.getUrl()));
-                }
+            if (isRetainBook(totalElement)) {
+                findBookStores.add(new BookStore(bookStore.getStoreName(), bookStore.getUrl()));
             }
-        } catch (Exception ex) {
-            log.error("not found kyobo book");
-            return BookStore.EMPTY_LIST;
         }
 
         return findBookStores;
@@ -95,8 +93,9 @@ public class KyoboBookCrawler implements BookCrawler {
                 .noneMatch(element -> element.getBodyElement().getAllElements().hasClass(HTML_CLASS_NAME_KY_BOOK_LIST));
     }
 
-    private boolean isDigit(String text) {
-        return text.matches(".*\\d.*");
+    private boolean isRetainBook(Element element) {
+        Assert.notNull(element, "not found kyobo retainBook element");
+        return element.text().matches(".*\\d.*");
     }
 
     private Element getTotalElement(Element bookStockElement) {

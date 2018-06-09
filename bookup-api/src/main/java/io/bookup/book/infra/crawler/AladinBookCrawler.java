@@ -1,4 +1,4 @@
-package io.bookup.store.infra.crawler;
+package io.bookup.book.infra.crawler;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,20 +17,21 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class AladinBookCrawler implements BookCrawler {
 
-    @Value("${bookup.crawler.aladin.url}")
-    private String url;
+    private final String HTML_CLASS_NAME_SS_BOOK_BOX = "ss_book_box";
+    private final String HTML_CLASS_NAME_SS_BOOK_LIST = "ss_book_list";
+    private final String HTML_TAG_NAME_LI = "li";
+    private final String HTML_CLASS_NAME_BO3 = "bo3";
+    private final String HTML_CLASS_NAME_SS_F_G2 = "ss_f_g2";
+    private final String HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3 = "usedshop_off_text3";
+    private final String HTML_ATTRIBUTE_NAME_HREF = "href";
 
-    private final static String HTML_CLASS_NAME_SS_BOOK_BOX = "ss_book_box";
-    private final static String HTML_CLASS_NAME_SS_BOOK_LIST = "ss_book_list";
-    private final static String HTML_TAG_NAME_LI = "li";
-    private final static String HTML_CLASS_NAME_BO3 = "bo3";
-    private final static String HTML_CLASS_NAME_SS_F_G2 = "ss_f_g2";
-    private final static String HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3 = "usedshop_off_text3";
-    private final static String HTML_ATTRIBUTE_NAME_HREF = "href";
-
+    private final String url;
     private final RestTemplate restTemplate;
 
-    public AladinBookCrawler(RestTemplate restTemplate) {
+    public AladinBookCrawler(@Value("${bookup.crawler.aladin.url}") String url,
+                             RestTemplate restTemplate) {
+
+        this.url = url;
         this.restTemplate = restTemplate;
     }
 
