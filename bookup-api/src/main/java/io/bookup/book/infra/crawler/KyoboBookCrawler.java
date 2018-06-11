@@ -139,7 +139,7 @@ public class KyoboBookCrawler implements BookCrawler {
                 .collect(Collectors.toList());
     }
 
-    private String createUrl(int storeId, String isbn) {
+    private String createUrl(String storeId, String isbn) {
         return String.format(this.url, storeId, isbn);
     }
 

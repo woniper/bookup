@@ -2,12 +2,11 @@ package io.bookup.book.infra.crawler;
 
 import java.util.Collection;
 import java.util.HashSet;
-
+import java.util.Objects;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -50,13 +49,17 @@ public class AladinBookCrawler implements BookCrawler {
         Collection<BookStore> bookStores = new HashSet<>();
 
         Elements bookBoxElements = getBookBoxElements(bodyElement);
-        for (Element element : getBookStoreElement(bookBoxElements)) {
-            bookStores.add(new BookStore("알라딘 : " + element.text(), getBookStoreHref(element)));
+        if (Objects.nonNull(bookBoxElements)) {
+            for (Element element : getBookStoreElement(bookBoxElements)) {
+                bookStores.add(new BookStore("알라딘 : " + element.text(), getBookStoreHref(element)));
+            }
         }
         return bookStores;
     }
 
     private boolean hasNotBook(Element bodyElement) {
+        if (Objects.isNull(bodyElement)) return false;
+
         return !bodyElement.getAllElements().hasClass(HTML_CLASS_NAME_SS_BOOK_BOX);
     }
 
@@ -69,28 +72,44 @@ public class AladinBookCrawler implements BookCrawler {
     }
 
     private Elements getBookBoxElements(Element bodyElement) {
+        if (Objects.isNull(bodyElement)) return null;
+
         return bodyElement.getElementsByClass(HTML_CLASS_NAME_SS_BOOK_BOX);
     }
 
     private Elements getBookElements(Elements bookBoxElements) {
-        Assert.notEmpty(bookBoxElements, "not found aladin BookBoxElements");
+        if (Objects.isNull(bookBoxElements)) return null;
 
         Elements bookListElements = bookBoxElements.first().getElementsByClass(HTML_CLASS_NAME_SS_BOOK_LIST);
-        Assert.notEmpty(bookListElements, "not found aladin BookListElements");
+
+        if (Objects.isNull(bookListElements)) return null;
 
         Elements liElements = bookListElements.first().getElementsByTag(HTML_TAG_NAME_LI);
-        Assert.notEmpty(bookListElements, "not found aladin LiElements");
+
+        if (Objects.isNull(liElements)) return null;
 
         return liElements;
     }
 
     private String getTitle(Elements bookElements) {
+        if (Objects.isNull(bookElements)) return null;
+
         Element bookElement = bookElements.first();
+
+        if (Objects.isNull(bookElement)) return null;
+
         Elements titleElements = bookElement.getElementsByClass(HTML_CLASS_NAME_BO3);
-        Assert.notNull(bookElement, "not found aladin TitleElements");
-        String title = titleElements.first().text();
+
+        if (Objects.isNull(titleElements)) return null;
+
+        Element titleElement = titleElements.first();
+
+        if (Objects.isNull(titleElement)) return null;
+
+        String title = titleElement.text();
 
         Elements subTitleElements = bookElement.getElementsByClass(HTML_CLASS_NAME_SS_F_G2);
+
         if (!CollectionUtils.isEmpty(subTitleElements)) {
             title += subTitleElements.first().text();
         }
@@ -99,16 +118,15 @@ public class AladinBookCrawler implements BookCrawler {
     }
 
     private String getDescription(Elements bookElements) {
+        if (Objects.isNull(bookElements) || bookElements.isEmpty()) return null;
+
         Element bookElement = bookElements.last();
-        Assert.notNull(bookElement, "not found aladin BookDescriptionElement");
 
         return bookElement.text();
     }
 
     private Elements getBookStoreElement(Elements bookBoxElements) {
         Element bookElement = bookBoxElements.first();
-        Elements bookStoreElements = bookElement.getElementsByClass(HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3);
-        Assert.notEmpty(bookStoreElements, "not found aladin BookStoreElements");
-        return bookStoreElements;
+        return bookElement.getElementsByClass(HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3);
     }
 }

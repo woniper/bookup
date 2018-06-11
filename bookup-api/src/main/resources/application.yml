@@ -2,7 +2,7 @@ bookup:
   crawler:
     aladin.url: http://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=UsedStore&SearchWord=%s
     kyobo:
-      url: http://mkiosk.kyobobook.co.kr/kiosk/search/searchMain.ink?site=%d&isbn=%s
+      url: http://mkiosk.kyobobook.co.kr/kiosk/search/searchMain.ink?site=%s&isbn=%s
       storeDataList:
       -
         storeName: "교보문고 : 광화문점"
