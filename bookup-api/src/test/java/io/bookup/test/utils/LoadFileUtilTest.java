@@ -9,11 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author woniper
  */
-public class LoadHtmlUtilTest {
+public class LoadFileUtilTest {
 
     @Test
     public void test() throws IOException {
-        String html = LoadHtmlUtil.load("html/aladin.html", Charset.forName("euc-kr"));
+        String html = LoadFileUtil.load("html/aladin.html", Charset.forName("euc-kr"));
         assertThat(html).isNotBlank();
     }
 }

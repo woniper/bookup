@@ -17,7 +17,7 @@ public class MockGenerator {
     public static RestTemplate mockRestTemplate(String filePath, Charset charset) throws IOException {
         RestTemplate restTemplate = mock(RestTemplate.class);
         Mockito.when(restTemplate.getForObject(anyString(), eq(String.class)))
-                .thenReturn(LoadHtmlUtil.load(filePath, charset));
+                .thenReturn(LoadFileUtil.load(filePath, charset));
 
         return restTemplate;
     }

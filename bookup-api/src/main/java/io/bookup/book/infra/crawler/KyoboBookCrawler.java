@@ -1,7 +1,7 @@
 package io.bookup.book.infra.crawler;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -54,76 +54,101 @@ public class KyoboBookCrawler implements BookCrawler {
             return null;
         }
 
-        Elements bookElements = getBookElements(requestCommand.get().getBodyElement());
-        Elements bookModElements = getBookModElements(bookElements);
-        Element bookElement = getBookElement(bookModElements);
-        return new Book(getTitle(bookElement), getDescription(bookElement), findBookStores(bookStores));
+        Element bkElement = getBkElement(requestCommand.get().getBodyElement());
+
+        return new Book(getTitle(bkElement), getDescription(bkElement), findBookStores(bookStores));
     }
 
     private String getTitle(Element element) {
+        if (Objects.isNull(element)) return null;
+
         return element.getElementsByClass(HTML_CLASS_NAME_TITLE).first().text();
     }
 
     private String getDescription(Element element) {
+        if (Objects.isNull(element)) return null;
+
         return element.getElementsByClass(HTML_CLASS_NAME_WRITER).first().text();
     }
 
     private Collection<BookStore> findBookStores(Collection<KyoboBookStoreRequestCommand> bookStores) {
         if (hasNotBook(bookStores)) return BookStore.EMPTY;
 
-        Collection<BookStore> findBookStores = new HashSet<>();
+        return bookStores.stream()
+                .filter(x -> isRetainBook(getTotalElement(x)))
+                .map(x -> new BookStore(x.getStoreName(), x.getUrl()))
+                .collect(Collectors.toList());
+    }
 
-        for (KyoboBookStoreRequestCommand bookStore : bookStores) {
-            Element bodyElement = bookStore.getBodyElement();
-            Elements bookElements = getBookElements(bodyElement);
-            Elements bookModElements = getBookModElements(bookElements);
-            Element bookStockElement = getBookStockElement(bookModElements);
-            Element totalElement = getTotalElement(bookStockElement);
+    private Element getTotalElement(KyoboBookStoreRequestCommand requestCommand) {
+        Element bodyElement = requestCommand.getBodyElement();
 
-            if (isRetainBook(totalElement)) {
-                findBookStores.add(new BookStore(bookStore.getStoreName(), bookStore.getUrl()));
-            }
-        }
+        if (Objects.isNull(bodyElement)) return null;
 
-        return findBookStores;
+        Elements listElements = getListElements(bodyElement);
+
+        if (CollectionUtils.isEmpty(listElements)) return null;
+
+        Elements modElements = getModElements(listElements);
+
+        if (CollectionUtils.isEmpty(modElements)) return null;
+
+        Elements stockElements = modElements.first().getElementsByClass(HTML_CLASS_NAME_BK_STOCK);
+
+        if (CollectionUtils.isEmpty(stockElements)) return null;
+
+        Element stockElement = stockElements.first();
+
+        if (Objects.isNull(stockElement)) return null;
+
+        Elements totalElements = stockElement.getElementsByClass(HTML_CLASS_NAME_TOTAL);
+
+        if (Objects.isNull(totalElements)) return null;
+
+        return totalElements.first();
     }
 
     private boolean hasNotBook(Collection<KyoboBookStoreRequestCommand> bookStores) {
+        if (Objects.isNull(bookStores) || bookStores.isEmpty()) return false;
+
         return bookStores.stream()
                 .noneMatch(element -> element.getBodyElement().getAllElements().hasClass(HTML_CLASS_NAME_KY_BOOK_LIST));
     }
 
     private boolean isRetainBook(Element element) {
-        Assert.notNull(element, "not found kyobo retainBook element");
+        if (Objects.isNull(element)) return false;
+
         return element.text().matches(".*\\d.*");
     }
 
-    private Element getTotalElement(Element bookStockElement) {
-        return bookStockElement.getElementsByClass(HTML_CLASS_NAME_TOTAL).first();
+    private Element getBkElement(Element element) {
+        if (Objects.isNull(element)) return null;
+
+        Elements listElements = getListElements(element);
+
+        if (CollectionUtils.isEmpty(listElements)) return null;
+
+        Elements modElements = getModElements(listElements);
+
+        if (CollectionUtils.isEmpty(modElements)) return null;
+
+        Elements bkElements = modElements.first().getElementsByClass(HTML_CLASS_NAME_BK_BOOK);
+
+        if (CollectionUtils.isEmpty(bkElements)) return null;
+
+        return bkElements.first();
     }
 
-    private Element getBookStockElement(Elements bookModElements) {
-        Elements bookStockElements = bookModElements.first().getElementsByClass(HTML_CLASS_NAME_BK_STOCK);
-        Assert.notNull(bookStockElements, "not found kyobo BookStockElement");
-        return bookStockElements.first();
+    private Elements getModElements(Elements elements) {
+        if (CollectionUtils.isEmpty(elements)) return null;
+
+        return elements.first().getElementsByClass(HTML_CLASS_NAME_BOOK_MOD);
     }
 
-    private Element getBookElement(Elements bookModElements) {
-        Element bookElement = bookModElements.first().getElementsByClass(HTML_CLASS_NAME_BK_BOOK).first();
-        Assert.notNull(bookElement, "not found kyobo BookElement");
-        return bookElement;
-    }
+    private Elements getListElements(Element element) {
+        if (Objects.isNull(element)) return null;
 
-    private Elements getBookModElements(Elements bookElements) {
-        Elements bookModElements = bookElements.first().getElementsByClass(HTML_CLASS_NAME_BOOK_MOD);
-        Assert.notEmpty(bookModElements, "not found kyobo BookModElements");
-        return bookModElements;
-    }
-
-    private Elements getBookElements(Element body) {
-        Elements bookElements = body.getElementsByClass(HTML_CLASS_NAME_KY_BOOK_LIST);
-        Assert.notEmpty(bookElements, "not found kyobo BookElements");
-        return bookElements;
+        return element.getElementsByClass(HTML_CLASS_NAME_KY_BOOK_LIST);
     }
 
     private Collection<KyoboBookStoreRequestCommand> getBookStoreRequestCommandList(String isbn) {

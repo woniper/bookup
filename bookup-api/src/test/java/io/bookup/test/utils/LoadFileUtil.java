@@ -8,12 +8,12 @@ import java.nio.file.Paths;
 /**
  * @author woniper
  */
-class LoadHtmlUtil {
+class LoadFileUtil {
 
     static String load(String filePath, Charset charset) throws IOException {
         StringBuilder data = new StringBuilder();
         Files.lines(
-                Paths.get(LoadHtmlUtil.class.getClassLoader().getResource(filePath).getFile()),
+                Paths.get(LoadFileUtil.class.getClassLoader().getResource(filePath).getFile()),
                 charset).forEach(data::append);
 
         return data.toString();
