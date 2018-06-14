@@ -1,6 +1,6 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.book.infra.crawler.KyoboProperties.StoreDataList;
+import io.bookup.book.infra.crawler.KyoboProperties.StoreList;
 import io.bookup.test.utils.MockGenerator;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,18 +21,16 @@ public class KyoboBookCrawlerTests {
     public void setUp() throws Exception {
         KyoboProperties properties = new KyoboProperties();
         properties.setUrl("http://mockurl.com");
-        properties.setStoreDataList(Arrays.asList(
-                new StoreDataList("교보문고 : 광화문점", "01"),
-                new StoreDataList("교보문고 : 강남점", "15")));
+        properties.setStoreList(Arrays.asList(
+                new StoreList("교보문고 : 광화문점", "01"),
+                new StoreList("교보문고 : 강남점", "15")));
 
 
         this.crawler = new KyoboBookCrawler(
-                "http://mockurl.com",
                 MockGenerator.mockRestTemplate("html/kyobo.html"),
                 properties);
 
         this.notFoundCrawler = new KyoboBookCrawler(
-                "http://mockurl.com",
                 MockGenerator.mockRestTemplate("html/notFoundKyobo.html"),
                 properties);
     }

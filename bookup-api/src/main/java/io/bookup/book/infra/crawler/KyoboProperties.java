@@ -1,9 +1,8 @@
 package io.bookup.book.infra.crawler;
 
 import java.util.List;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +15,17 @@ import org.springframework.stereotype.Component;
 class KyoboProperties {
 
     private String url;
-    private List<StoreDataList> storeDataList;
+    private List<StoreList> storeList;
 
     @Data
-    @AllArgsConstructor
-    static class StoreDataList {
+    @NoArgsConstructor
+    static class StoreList {
         private String storeName;
         private String storeId;
+
+        StoreList(String storeName, String storeId) {
+            this.storeName = storeName;
+            this.storeId = storeId;
+        }
     }
 }

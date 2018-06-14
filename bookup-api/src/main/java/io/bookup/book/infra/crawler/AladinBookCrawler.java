@@ -1,8 +1,8 @@
 package io.bookup.book.infra.crawler;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,23 +38,22 @@ public class AladinBookCrawler implements BookCrawler {
     public Book findByIsbn(String isbn) {
         Element bodyElement = body(restTemplate, createUrl(isbn));
 
-        if(hasNotBook(bodyElement)) return null;
+        if (hasNotBook(bodyElement)) return null;
 
-        Elements bookBoxElements = getBookBoxElements(bodyElement);
-        Elements bookElements = getBookElements(bookBoxElements);
+        Elements bookElements = getBookElements(bodyElement);
         return new Book(getTitle(bookElements), getDescription(bookElements), findBookStores(bodyElement));
     }
 
-    private Collection<BookStore> findBookStores(Element bodyElement) {
-        Collection<BookStore> bookStores = new HashSet<>();
+    private Collection<BookStore> findBookStores(Element element) {
+        if (Objects.isNull(element)) return null;
 
-        Elements bookBoxElements = getBookBoxElements(bodyElement);
-        if (Objects.nonNull(bookBoxElements)) {
-            for (Element element : getBookStoreElement(bookBoxElements)) {
-                bookStores.add(new BookStore("알라딘 : " + element.text(), getBookStoreHref(element)));
-            }
-        }
-        return bookStores;
+        Elements boxElements = element.getElementsByClass(HTML_CLASS_NAME_SS_BOOK_BOX);
+
+        if (CollectionUtils.isEmpty(boxElements)) return null;
+
+        return getBookStoreElement(boxElements).stream()
+                .map(x -> new BookStore("알라딘 : " + x.text(), getBookStoreHref(x)))
+                .collect(Collectors.toList());
     }
 
     private boolean hasNotBook(Element bodyElement) {
@@ -71,22 +70,20 @@ public class AladinBookCrawler implements BookCrawler {
         return element.attr(HTML_ATTRIBUTE_NAME_HREF);
     }
 
-    private Elements getBookBoxElements(Element bodyElement) {
-        if (Objects.isNull(bodyElement)) return null;
+    private Elements getBookElements(Element element) {
+        if (Objects.isNull(element)) return null;
 
-        return bodyElement.getElementsByClass(HTML_CLASS_NAME_SS_BOOK_BOX);
-    }
+        Elements boxElements = element.getElementsByClass(HTML_CLASS_NAME_SS_BOOK_BOX);
 
-    private Elements getBookElements(Elements bookBoxElements) {
-        if (Objects.isNull(bookBoxElements)) return null;
+        if (CollectionUtils.isEmpty(boxElements)) return null;
 
-        Elements bookListElements = bookBoxElements.first().getElementsByClass(HTML_CLASS_NAME_SS_BOOK_LIST);
+        Elements listElements = boxElements.first().getElementsByClass(HTML_CLASS_NAME_SS_BOOK_LIST);
 
-        if (Objects.isNull(bookListElements)) return null;
+        if (CollectionUtils.isEmpty(listElements)) return null;
 
-        Elements liElements = bookListElements.first().getElementsByTag(HTML_TAG_NAME_LI);
+        Elements liElements = listElements.first().getElementsByTag(HTML_TAG_NAME_LI);
 
-        if (Objects.isNull(liElements)) return null;
+        if (CollectionUtils.isEmpty(liElements)) return null;
 
         return liElements;
     }
@@ -117,16 +114,14 @@ public class AladinBookCrawler implements BookCrawler {
         return title;
     }
 
-    private String getDescription(Elements bookElements) {
-        if (Objects.isNull(bookElements) || bookElements.isEmpty()) return null;
+    private String getDescription(Elements elements) {
+        if (CollectionUtils.isEmpty(elements)) return null;
 
-        Element bookElement = bookElements.last();
-
-        return bookElement.text();
+        return elements.last().text();
     }
 
-    private Elements getBookStoreElement(Elements bookBoxElements) {
-        Element bookElement = bookBoxElements.first();
+    private Elements getBookStoreElement(Elements elements) {
+        Element bookElement = elements.first();
         return bookElement.getElementsByClass(HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3);
     }
 }

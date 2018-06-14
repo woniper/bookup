@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -29,15 +28,12 @@ public class KyoboBookCrawler implements BookCrawler {
     private final String HTML_CLASS_NAME_BK_STOCK = "bk_stock";
     private final String HTML_CLASS_NAME_TOTAL = "total";
 
-    private final String url;
     private final RestTemplate restTemplate;
     private final KyoboProperties properties;
 
-    public KyoboBookCrawler(@Value("${bookup.crawler.kyobo.url}") String url,
-                            RestTemplate restTemplate,
+    public KyoboBookCrawler(RestTemplate restTemplate,
                             KyoboProperties properties) {
 
-        this.url = url;
         this.restTemplate = restTemplate;
         this.properties = properties;
     }
@@ -152,7 +148,7 @@ public class KyoboBookCrawler implements BookCrawler {
     }
 
     private Collection<KyoboBookStoreRequestCommand> getBookStoreRequestCommandList(String isbn) {
-        return properties.getStoreDataList().stream()
+        return properties.getStoreList().stream()
                 .map(x -> {
                     String url = createUrl(x.getStoreId(), isbn);
                     return new KyoboBookStoreRequestCommand(
@@ -165,7 +161,7 @@ public class KyoboBookCrawler implements BookCrawler {
     }
 
     private String createUrl(String storeId, String isbn) {
-        return String.format(this.url, storeId, isbn);
+        return String.format(properties.getUrl(), storeId, isbn);
     }
 
     @Getter

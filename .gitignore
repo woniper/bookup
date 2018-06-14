@@ -10,3 +10,4 @@ build
 *.ear
 
 gen
+.DS_Store
