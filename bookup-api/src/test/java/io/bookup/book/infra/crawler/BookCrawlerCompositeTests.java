@@ -1,6 +1,6 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.test.utils.MockGenerator;
+import io.bookup.book.infra.BookFinder;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +17,7 @@ public class BookCrawlerCompositeTests {
                 "http://mockurl.com",
                 MockGenerator.mockRestTemplate("html/kyobo.html"));
 
-        BookCrawler crawler = new BookCrawlerComposite()
+        BookFinder<Book> crawler = new BookCrawlerComposite()
                 .addBookCrawler(aladinBookCrawler);
 
         // when

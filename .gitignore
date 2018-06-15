@@ -11,3 +11,4 @@ build
 
 gen
 .DS_Store
+application-default.yml

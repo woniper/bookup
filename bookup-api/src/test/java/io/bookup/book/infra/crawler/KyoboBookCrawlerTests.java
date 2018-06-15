@@ -1,7 +1,7 @@
 package io.bookup.book.infra.crawler;
 
+import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.crawler.KyoboProperties.StoreList;
-import io.bookup.test.utils.MockGenerator;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Before;
@@ -14,8 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class KyoboBookCrawlerTests {
 
-    private BookCrawler crawler;
-    private BookCrawler notFoundCrawler;
+    private BookFinder<Book> crawler;
+    private BookFinder<Book> notFoundCrawler;
 
     @Before
     public void setUp() throws Exception {

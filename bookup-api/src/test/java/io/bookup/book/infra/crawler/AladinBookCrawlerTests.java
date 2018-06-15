@@ -1,6 +1,6 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.test.utils.MockGenerator;
+import io.bookup.book.infra.BookFinder;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import org.junit.Before;
@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class AladinBookCrawlerTests {
 
-    private BookCrawler crawler;
-    private BookCrawler notFoundCrawler;
+    private BookFinder<Book> crawler;
+    private BookFinder<Book> notFoundCrawler;
 
     private String isbn = "12398798243";
 

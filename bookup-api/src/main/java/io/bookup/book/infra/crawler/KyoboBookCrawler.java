@@ -1,5 +1,6 @@
 package io.bookup.book.infra.crawler;
 
+import io.bookup.book.infra.BookFinder;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,14 +12,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author woniper
  */
 @Slf4j
 @Component
-public class KyoboBookCrawler implements BookCrawler {
+class KyoboBookCrawler implements BookFinder<Book> {
 
     private final String HTML_CLASS_NAME_TITLE = "title";
     private final String HTML_CLASS_NAME_WRITER = "writer";
@@ -28,10 +28,10 @@ public class KyoboBookCrawler implements BookCrawler {
     private final String HTML_CLASS_NAME_BK_STOCK = "bk_stock";
     private final String HTML_CLASS_NAME_TOTAL = "total";
 
-    private final RestTemplate restTemplate;
+    private final HtmlRestTemplate restTemplate;
     private final KyoboProperties properties;
 
-    public KyoboBookCrawler(RestTemplate restTemplate,
+    KyoboBookCrawler(HtmlRestTemplate restTemplate,
                             KyoboProperties properties) {
 
         this.restTemplate = restTemplate;
@@ -154,7 +154,7 @@ public class KyoboBookCrawler implements BookCrawler {
                     return new KyoboBookStoreRequestCommand(
                             x.getStoreName(),
                             url,
-                            CompletableFuture.supplyAsync(() -> body(restTemplate, url))
+                            CompletableFuture.supplyAsync(() -> restTemplate.getBodyElement(url))
                     );
                 })
                 .collect(Collectors.toList());

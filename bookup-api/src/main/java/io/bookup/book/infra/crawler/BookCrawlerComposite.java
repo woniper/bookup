@@ -1,20 +1,30 @@
 package io.bookup.book.infra.crawler;
 
+import io.bookup.book.infra.BookFinder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Component;
 
 /**
  * @author woniper
  */
 @Component
-public class BookCrawlerComposite implements BookCrawler {
+public class BookCrawlerComposite implements BookFinder<Book> {
 
-    private final List<BookCrawler> bookCrawlers = new ArrayList<>();
+    private final List<BookFinder<Book>> bookCrawlers;
 
-    public BookCrawlerComposite addBookCrawler(BookCrawler bookCrawler) {
+    public BookCrawlerComposite() {
+        this.bookCrawlers = new ArrayList<>();
+    }
+
+    public BookCrawlerComposite(AladinBookCrawler aladinBookCrawler,
+                                KyoboBookCrawler kyoboBookCrawler) {
+        this.bookCrawlers = Arrays.asList(aladinBookCrawler, kyoboBookCrawler);
+    }
+
+    BookCrawlerComposite addBookCrawler(BookFinder<Book> bookCrawler) {
         this.bookCrawlers.add(bookCrawler);
         return this;
     }

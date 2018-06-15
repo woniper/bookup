@@ -1,5 +1,6 @@
 package io.bookup.book.infra.crawler;
 
+import io.bookup.book.infra.BookFinder;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -8,13 +9,12 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author woniper
  */
 @Component
-public class AladinBookCrawler implements BookCrawler {
+class AladinBookCrawler implements BookFinder<Book> {
 
     private final String HTML_CLASS_NAME_SS_BOOK_BOX = "ss_book_box";
     private final String HTML_CLASS_NAME_SS_BOOK_LIST = "ss_book_list";
@@ -25,10 +25,10 @@ public class AladinBookCrawler implements BookCrawler {
     private final String HTML_ATTRIBUTE_NAME_HREF = "href";
 
     private final String url;
-    private final RestTemplate restTemplate;
+    private final HtmlRestTemplate restTemplate;
 
-    public AladinBookCrawler(@Value("${bookup.crawler.aladin.url}") String url,
-                             RestTemplate restTemplate) {
+    AladinBookCrawler(@Value("${bookup.crawler.aladin.url}") String url,
+                             HtmlRestTemplate restTemplate) {
 
         this.url = url;
         this.restTemplate = restTemplate;
@@ -36,7 +36,7 @@ public class AladinBookCrawler implements BookCrawler {
 
     @Override
     public Book findByIsbn(String isbn) {
-        Element bodyElement = body(restTemplate, createUrl(isbn));
+        Element bodyElement = restTemplate.getBodyElement(createUrl(isbn));
 
         if (hasNotBook(bodyElement)) return null;
 

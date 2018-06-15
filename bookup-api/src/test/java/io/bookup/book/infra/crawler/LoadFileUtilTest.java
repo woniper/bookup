@@ -1,4 +1,4 @@
-package io.bookup.test.utils;
+package io.bookup.book.infra.crawler;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
