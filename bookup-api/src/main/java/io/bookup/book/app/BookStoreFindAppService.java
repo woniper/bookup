@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
  * @author woniper
  */
 @Service
-public class BookFindAppService {
+public class BookStoreFindAppService {
 
     private final BookCrawlerComposite bookCrawler;
 
-    public BookFindAppService(BookCrawlerComposite bookCrawlerComposite) {
+    public BookStoreFindAppService(BookCrawlerComposite bookCrawlerComposite) {
         this.bookCrawler = bookCrawlerComposite;
     }
 

@@ -82,3 +82,5 @@ bookup:
           storeId: "75"
         - storeName: "교보문고 : 전북대점"
           storeId: "77"
+  rest:
+    naver.url: "https://openapi.naver.com/v1/search/book.json?query=%s"
