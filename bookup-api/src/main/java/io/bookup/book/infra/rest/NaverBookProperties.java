@@ -34,4 +34,8 @@ public class NaverBookProperties {
     String createUrl(String query) {
         return String.format(getUrl(), query);
     }
+
+    String createUrl(String query, int start, int display) {
+        return String.format("%s?start=%d&display=%d", createUrl(query), start + 1, display);
+    }
 }

@@ -30,7 +30,7 @@ class NaverBook {
         private String description;
 
         String getPublishDate() {
-            return this.pubdate;
+            return getPubdate();
         }
     }
 }
