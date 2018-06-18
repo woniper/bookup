@@ -24,18 +24,10 @@ public class Book {
         this.bookStores = bookStores;
     }
 
-    private Book merge(Collection<? extends BookStore> bookStores) {
+    public Book merge(Collection<? extends BookStore> bookStores) {
         if (Objects.nonNull(bookStores) && !bookStores.isEmpty()) {
             this.bookStores.addAll(bookStores);
         }
         return this;
-    }
-
-    public void merge(Book book) {
-        if(Objects.nonNull(book)) {
-            this.title = book.getTitle();
-            this.description = book.getDescription();
-            this.merge(book.getBookStores());
-        }
     }
 }

@@ -1,16 +1,18 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.book.app.BookStoreFindAppService;
+import io.bookup.book.app.BookStoreCompositeAppService;
 import io.bookup.book.domain.Book;
 import java.nio.charset.Charset;
 import org.junit.Test;
 
+import static io.bookup.book.infra.crawler.MockGenerator.kyoboBookRestTemplate;
+import static io.bookup.book.infra.crawler.MockGenerator.kyoboProperties;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author woniper
  */
-public class BookStoreFindAppServiceTests {
+public class BookStoreCompositeAppServiceTests {
 
     @Test
     public void testAladinBookCrawler() throws Exception {
@@ -19,7 +21,8 @@ public class BookStoreFindAppServiceTests {
                 "http://mockurl.com",
                 MockGenerator.mockRestTemplate("html/aladin.html", Charset.forName("euc-kr")));
 
-        BookStoreFindAppService service = new BookStoreFindAppService(bookCrawler, MockGenerator.kyoboBookRestTemplate());
+        BookStoreCompositeAppService service =
+                new BookStoreCompositeAppService(bookCrawler, kyoboBookRestTemplate(), kyoboProperties());
 
         // when
         Book book = service.getBook("3450980");

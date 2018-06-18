@@ -2,7 +2,7 @@ package io.bookup.book.api;
 
 import io.bookup.book.api.representation.NaverBookResponseDto;
 import io.bookup.book.api.representation.NaverBookResponseDto.Item;
-import io.bookup.book.app.BookStoreFindAppService;
+import io.bookup.book.app.BookStoreCompositeAppService;
 import io.bookup.book.domain.NaverBook;
 import io.bookup.book.infra.rest.NaverBookRestTemplate;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/books")
 public class BookFindController {
 
-    private final BookStoreFindAppService bookStoreFindAppService;
+    private final BookStoreCompositeAppService bookStoreCompositeAppService;
     private final NaverBookRestTemplate naverBookRestTemplate;
 
-    public BookFindController(BookStoreFindAppService bookStoreFindAppService,
+    public BookFindController(BookStoreCompositeAppService bookStoreCompositeAppService,
                               NaverBookRestTemplate naverBookRestTemplate) {
 
-        this.bookStoreFindAppService = bookStoreFindAppService;
+        this.bookStoreCompositeAppService = bookStoreCompositeAppService;
         this.naverBookRestTemplate = naverBookRestTemplate;
     }
 
     @GetMapping(value = "/stores/{isbn}")
     public ResponseEntity<?> findBookStore(@PathVariable("isbn") String isbn) {
-        return ResponseEntity.ok(bookStoreFindAppService.getBook(isbn));
+        return ResponseEntity.ok(bookStoreCompositeAppService.getBook(isbn));
     }
 
     @GetMapping("/{isbn}")

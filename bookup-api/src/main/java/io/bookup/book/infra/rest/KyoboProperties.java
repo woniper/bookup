@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "bookup.rest.kyobo")
-class KyoboProperties {
+public class KyoboProperties {
 
     private String url;
     private String storeUrl;
 
-    String createUrl(String isbn) {
+    public String createUrl(String isbn) {
         return String.format(url, isbn);
     }
 
-    String createUrl(String storeId, String storeName) {
+    public String createUrl(String storeId, String storeName) {
         return String.format(storeUrl, storeId, storeName);
     }
 }

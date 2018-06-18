@@ -14,6 +14,10 @@ public class KyoboBookStore {
 
     private List<Item> items;
 
+    public KyoboBookStore(List<Item> items) {
+        this.items = items;
+    }
+
     @NoArgsConstructor
     public static class Item {
 
@@ -25,6 +29,12 @@ public class KyoboBookStore {
 
         @JsonProperty("code_desc")
         private String codeDesc;
+
+        public Item(String site, int qty, String codeDesc) {
+            this.site = site;
+            this.qty = qty;
+            this.codeDesc = codeDesc;
+        }
 
         public String getStoreId() {
             return this.site;
