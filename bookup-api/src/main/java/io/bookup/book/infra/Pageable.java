@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Pageable {
 
-    private int page;
+    private int page = 0;
 
     @Size(max = 100)
-    private int size;
+    private int size = 20;
 }

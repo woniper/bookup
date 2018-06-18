@@ -40,7 +40,8 @@ public class BookFindController {
     }
 
     @GetMapping(value = "/{title}", params = {"page", "size"})
-    public ResponseEntity<NaverBookResponseDto> findBooks(@PathVariable("title") String title, Pageable pageable) {
+    public ResponseEntity<NaverBookResponseDto> findBooks(@PathVariable("title") String title,
+                                                          Pageable pageable) {
         NaverBook naverBook = naverBookRestTemplate.findByTitle(title, pageable);
         return ResponseEntity.ok(new NaverBookResponseDto(naverBook));
     }

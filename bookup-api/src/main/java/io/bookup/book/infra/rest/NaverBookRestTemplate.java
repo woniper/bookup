@@ -4,7 +4,6 @@ import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.BookRepository;
 import io.bookup.book.infra.Pageable;
 import io.bookup.book.infra.rest.NaverBook.Item;
-import java.nio.charset.Charset;
 import java.util.Objects;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -37,7 +36,7 @@ public class NaverBookRestTemplate implements BookRepository<NaverBook>, BookFin
 
     @Override
     public NaverBook findByTitle(String title, Pageable pageable) {
-        return response(new String(title.getBytes(), Charset.forName("UTF-8")), pageable);
+        return response(title, pageable);
     }
 
     private NaverBook response(String query, Pageable pageable) {
