@@ -13,7 +13,7 @@ import lombok.Getter;
 public class BookStore {
 
     @JsonIgnore
-    public static final Collection<BookStore> EMPTY = Collections.emptySet();
+    public static final Collection<BookStore> EMPTY = Collections.emptyList();
 
     private String storeName;
     private String href;
