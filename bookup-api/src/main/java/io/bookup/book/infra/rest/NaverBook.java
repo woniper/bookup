@@ -1,7 +1,6 @@
 package io.bookup.book.infra.rest;
 
 import java.util.List;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,13 +9,19 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-class NaverBook {
+public class NaverBook {
+
+    private int total;
+
+    private int start;
+
+    private int display;
 
     private List<Item> items;
 
     @Getter
     @NoArgsConstructor
-    static class Item {
+    public static class Item {
         private String title;
         private String link;
         private String image;
@@ -24,13 +29,8 @@ class NaverBook {
         private String price;
         private String discount;
         private String publisher;
-        @Getter(AccessLevel.PRIVATE)
         private String pubdate;
         private String isbn;
         private String description;
-
-        String getPublishDate() {
-            return getPubdate();
-        }
     }
 }

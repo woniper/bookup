@@ -15,9 +15,4 @@ public class Pageable {
 
     @Size(max = 100)
     private int size;
-
-    public Pageable(int page, int size) {
-        this.page = page;
-        this.size = size;
-    }
 }

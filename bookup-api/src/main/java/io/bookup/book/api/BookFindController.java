@@ -1,7 +1,9 @@
 package io.bookup.book.api;
 
+import io.bookup.book.api.NaverBookResponseDto.Item;
 import io.bookup.book.app.BookStoreFindAppService;
 import io.bookup.book.infra.Pageable;
+import io.bookup.book.infra.rest.NaverBook;
 import io.bookup.book.infra.rest.NaverBookRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,12 +34,14 @@ public class BookFindController {
     }
 
     @GetMapping("/{isbn}")
-    public ResponseEntity<?> findBooks(@PathVariable("isbn") String isbn) {
-        return ResponseEntity.ok(naverBookRestTemplate.findByIsbn(isbn));
+    public ResponseEntity<Item> findBooks(@PathVariable("isbn") String isbn) {
+        NaverBook.Item item = naverBookRestTemplate.findByIsbn(isbn);
+        return ResponseEntity.ok(new Item(item));
     }
 
     @GetMapping(value = "/{title}", params = {"page", "size"})
-    public ResponseEntity<?> findBooks(@PathVariable("title") String title, Pageable pageable) {
-        return ResponseEntity.ok(naverBookRestTemplate.findByTitle(title, pageable));
+    public ResponseEntity<NaverBookResponseDto> findBooks(@PathVariable("title") String title, Pageable pageable) {
+        NaverBook naverBook = naverBookRestTemplate.findByTitle(title, pageable);
+        return ResponseEntity.ok(new NaverBookResponseDto(naverBook));
     }
 }
