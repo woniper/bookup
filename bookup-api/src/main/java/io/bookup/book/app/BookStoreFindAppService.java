@@ -1,7 +1,10 @@
 package io.bookup.book.app;
 
-import io.bookup.book.infra.crawler.Book;
-import io.bookup.book.infra.crawler.BookCrawlerComposite;
+import io.bookup.book.domain.Book;
+import io.bookup.book.infra.crawler.AladinBookCrawler;
+import io.bookup.book.infra.rest.KyoboBookRestTemplate;
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,14 +13,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookStoreFindAppService {
 
-    private final BookCrawlerComposite bookCrawler;
+    private final AladinBookCrawler aladinBookCrawler;
+    private final KyoboBookRestTemplate kyoboBookRestTemplate;
 
-    public BookStoreFindAppService(BookCrawlerComposite bookCrawlerComposite) {
-        this.bookCrawler = bookCrawlerComposite;
+    public BookStoreFindAppService(AladinBookCrawler aladinBookCrawler,
+                                   KyoboBookRestTemplate kyoboBookRestTemplate) {
+
+        this.aladinBookCrawler = aladinBookCrawler;
+        this.kyoboBookRestTemplate = kyoboBookRestTemplate;
     }
 
     public Book getBook(String isbn) {
-        return bookCrawler.findByIsbn(isbn);
+        return mergeBook(Arrays.asList(
+                aladinBookCrawler.findByIsbn(isbn),
+                kyoboBookRestTemplate.findByIsbn(isbn)
+        ));
     }
 
+    private Book mergeBook(List<Book> books) {
+        Book book = new Book();
+        books.forEach(book::merge);
+
+        return book;
+    }
 }

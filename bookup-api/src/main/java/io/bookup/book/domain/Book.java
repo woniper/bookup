@@ -1,4 +1,4 @@
-package io.bookup.book.infra.crawler;
+package io.bookup.book.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,7 @@ public class Book {
     private String description;
     private Collection<BookStore> bookStores = new ArrayList<>();
 
-    Book(String title, String description, Collection<BookStore> bookStores) {
+    public Book(String title, String description, Collection<BookStore> bookStores) {
         this.title = title;
         this.description = description;
         this.bookStores = bookStores;
@@ -31,7 +31,7 @@ public class Book {
         return this;
     }
 
-    void merge(Book book) {
+    public void merge(Book book) {
         if(Objects.nonNull(book)) {
             this.title = book.getTitle();
             this.description = book.getDescription();

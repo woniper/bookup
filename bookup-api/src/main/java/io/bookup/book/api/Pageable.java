@@ -1,4 +1,4 @@
-package io.bookup.book.infra;
+package io.bookup.book.api;
 
 import javax.validation.constraints.Size;
 import lombok.Data;

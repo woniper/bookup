@@ -1,9 +1,9 @@
 package io.bookup.book.api;
 
-import io.bookup.book.api.NaverBookResponseDto.Item;
+import io.bookup.book.api.representation.NaverBookResponseDto;
+import io.bookup.book.api.representation.NaverBookResponseDto.Item;
 import io.bookup.book.app.BookStoreFindAppService;
-import io.bookup.book.infra.Pageable;
-import io.bookup.book.infra.rest.NaverBook;
+import io.bookup.book.domain.NaverBook;
 import io.bookup.book.infra.rest.NaverBookRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

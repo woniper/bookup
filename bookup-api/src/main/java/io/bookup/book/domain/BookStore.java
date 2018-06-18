@@ -1,4 +1,4 @@
-package io.bookup.book.infra.crawler;
+package io.bookup.book.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
@@ -18,7 +18,7 @@ public class BookStore {
     private String storeName;
     private String href;
 
-    BookStore(String storeName, String href) {
+    public BookStore(String storeName, String href) {
         this.storeName = storeName;
         this.href = href;
     }

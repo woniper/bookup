@@ -1,9 +1,10 @@
 package io.bookup.book.infra.rest;
 
+import io.bookup.book.domain.NaverBook;
 import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.BookRepository;
-import io.bookup.book.infra.Pageable;
-import io.bookup.book.infra.rest.NaverBook.Item;
+import io.bookup.book.api.Pageable;
+import io.bookup.book.domain.NaverBook.Item;
 import java.util.Objects;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -22,9 +23,11 @@ public class NaverBookRestTemplate implements BookRepository<NaverBook>, BookFin
     private final RestTemplate restTemplate;
     private final NaverBookProperties properties;
 
-    public NaverBookRestTemplate(NaverBookProperties properties) {
+    public NaverBookRestTemplate(RestTemplate restTemplate,
+                                 NaverBookProperties properties) {
+
+        this.restTemplate = restTemplate;
         this.properties = properties;
-        this.restTemplate = new RestTemplate();
     }
 
     @Override

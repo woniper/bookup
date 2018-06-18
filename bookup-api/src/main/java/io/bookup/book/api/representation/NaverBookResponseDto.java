@@ -1,6 +1,6 @@
-package io.bookup.book.api;
+package io.bookup.book.api.representation;
 
-import io.bookup.book.infra.rest.NaverBook;
+import io.bookup.book.domain.NaverBook;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-class NaverBookResponseDto {
+public class NaverBookResponseDto {
 
     private Pageable pageable;
 
     private List<Item> items;
 
-    NaverBookResponseDto(NaverBook naverBook) {
+    public NaverBookResponseDto(NaverBook naverBook) {
         this.pageable = new Pageable(naverBook.getTotal(), naverBook.getStart(), naverBook.getDisplay());
         this.items = naverBook.getItems().stream()
                 .map(Item::new)
@@ -27,7 +27,7 @@ class NaverBookResponseDto {
 
     @Getter
     @NoArgsConstructor
-    static class Item {
+    public static class Item {
         private String title;
         private String link;
         private String image;
@@ -40,7 +40,7 @@ class NaverBookResponseDto {
         private String isbn13;
         private String description;
 
-        Item(NaverBook.Item source) {
+        public Item(NaverBook.Item source) {
             this.title = source.getTitle();
             this.link = source.getLink();
             this.image = source.getImage();
@@ -64,7 +64,7 @@ class NaverBookResponseDto {
 
     @Getter
     @NoArgsConstructor
-    static class Pageable {
+    public static class Pageable {
         private int total;
         private int page;
         private int size;

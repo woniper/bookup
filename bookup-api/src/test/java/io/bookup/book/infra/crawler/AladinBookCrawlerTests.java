@@ -1,6 +1,8 @@
 package io.bookup.book.infra.crawler;
 
+import io.bookup.book.domain.Book;
 import io.bookup.book.infra.BookFinder;
+import io.bookup.book.domain.BookStore;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import org.junit.Before;
