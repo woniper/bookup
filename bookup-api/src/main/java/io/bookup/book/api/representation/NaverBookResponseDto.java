@@ -1,6 +1,6 @@
 package io.bookup.book.api.representation;
 
-import io.bookup.book.domain.NaverBook;
+import io.bookup.book.infra.rest.NaverBook;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

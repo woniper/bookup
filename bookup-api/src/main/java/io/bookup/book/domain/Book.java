@@ -18,9 +18,13 @@ public class Book {
     private String description;
     private Collection<BookStore> bookStores = new ArrayList<>();
 
-    public Book(String title, String description, Collection<BookStore> bookStores) {
+    public Book(String title, String description) {
         this.title = title;
         this.description = description;
+    }
+
+    public Book(String title, String description, Collection<BookStore> bookStores) {
+        this(title, description);
         this.bookStores = bookStores;
     }
 

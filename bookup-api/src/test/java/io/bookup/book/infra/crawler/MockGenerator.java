@@ -1,12 +1,11 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.book.domain.KyoboBookStore;
+import io.bookup.book.domain.BookStore;
 import io.bookup.book.infra.rest.KyoboBookRestTemplate;
 import io.bookup.book.infra.rest.KyoboProperties;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Optional;
 import org.springframework.web.client.RestTemplate;
 
 import static org.mockito.Matchers.anyString;
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.when;
  */
 class MockGenerator {
 
-    static RestTemplate mockRestTemplate(String filePath, Charset charset) throws IOException {
+    static RestTemplate restTemplate(String filePath, Charset charset) throws IOException {
         RestTemplate restTemplate = mock(RestTemplate.class);
         when(restTemplate.getForObject(anyString(), eq(String.class)))
                 .thenReturn(LoadFileUtil.load(filePath, charset));
@@ -31,11 +30,11 @@ class MockGenerator {
         KyoboBookRestTemplate restTemplate = mock(KyoboBookRestTemplate.class);
         when(restTemplate.findByIsbn(anyString()))
                 .thenReturn(
-                        Optional.of(new KyoboBookStore(Arrays.asList(
-                                new KyoboBookStore.Item("01", 2, "잠실점"),
-                                new KyoboBookStore.Item("02", 2, "송도점"),
-                                new KyoboBookStore.Item("03", 2, "구로점")
-                        ))));
+                        Arrays.asList(
+                            new BookStore("test book1", "http://example.com"),
+                            new BookStore("test book2", "http://example.com"),
+                            new BookStore("test book3", "http://example.com")
+                        ));
 
         return restTemplate;
     }

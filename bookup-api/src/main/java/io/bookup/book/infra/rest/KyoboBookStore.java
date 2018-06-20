@@ -1,4 +1,4 @@
-package io.bookup.book.domain;
+package io.bookup.book.infra.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

@@ -2,14 +2,20 @@ package io.bookup.book.app;
 
 import io.bookup.book.domain.Book;
 import io.bookup.book.domain.BookStore;
-import io.bookup.book.domain.KyoboBookStore;
+import io.bookup.book.domain.NotFoundBookException;
+import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.crawler.AladinBookCrawler;
+import io.bookup.book.infra.crawler.BandinLunisBookCrawler;
 import io.bookup.book.infra.rest.KyoboBookRestTemplate;
-import io.bookup.book.infra.rest.KyoboProperties;
+import io.bookup.book.infra.rest.NaverBook;
+import io.bookup.book.infra.rest.NaverBookRestTemplate;
+import io.bookup.common.utils.FutureUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,35 +24,45 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookStoreCompositeAppService {
 
-    private final AladinBookCrawler aladinBookCrawler;
-    private final KyoboBookRestTemplate kyoboBookRestTemplate;
-    private final KyoboProperties kyoboProperties;
+    private final NaverBookRestTemplate naverBookRestTemplate;
+    private final List<BookFinder<List<BookStore>>> bookStoreFinders;
 
-    public BookStoreCompositeAppService(AladinBookCrawler aladinBookCrawler,
-                                        KyoboBookRestTemplate kyoboBookRestTemplate,
-                                        KyoboProperties kyoboProperties) {
+    public BookStoreCompositeAppService(NaverBookRestTemplate naverBookRestTemplate,
+                                        AladinBookCrawler aladinBookCrawler,
+                                        BandinLunisBookCrawler bandinLunisBookCrawler,
+                                        KyoboBookRestTemplate kyoboBookRestTemplate) {
 
-        this.aladinBookCrawler = aladinBookCrawler;
-        this.kyoboBookRestTemplate = kyoboBookRestTemplate;
-        this.kyoboProperties = kyoboProperties;
+        this.naverBookRestTemplate = naverBookRestTemplate;
+        this.bookStoreFinders = Arrays.asList(
+                aladinBookCrawler,
+                bandinLunisBookCrawler,
+                kyoboBookRestTemplate
+        );
     }
 
     public Book getBook(String isbn) {
-        Book aladinBook = aladinBookCrawler.findByIsbn(isbn);
-        List<BookStore> bookStores = mapToBookStore(isbn, kyoboBookRestTemplate.findByIsbn(isbn));
-        aladinBook.merge(bookStores);
+        CompletableFuture<Book> bookFuture =
+                CompletableFuture.supplyAsync(() -> mapBook(naverBookRestTemplate.findByIsbn(isbn)))
+                .thenApplyAsync(x -> x.merge(getBookStores(isbn)));
 
-        return aladinBook;
+        return FutureUtils.getFutureItem(bookFuture)
+                .orElseThrow(() -> new NotFoundBookException(isbn));
     }
 
-    private List<BookStore> mapToBookStore(String isbn, Optional<KyoboBookStore> kyoboBookStore) {
-        if (StringUtils.isEmpty(isbn) || !kyoboBookStore.isPresent())
-            return null;
+    private List<BookStore> getBookStores(String isbn) {
+        List<BookStore> bookStores = new ArrayList<>();
 
-        return kyoboBookStore.get().getItems().stream()
-                .filter(x -> x.getAmount() > 0)
-                .map(x -> new BookStore(x.getStoreName(), kyoboProperties.createUrl(x.getStoreId(), isbn)))
-                .collect(Collectors.toList());
+        bookStoreFinders.stream()
+                .map(x -> CompletableFuture.supplyAsync(() -> x.findByIsbn(isbn)))
+                .collect(Collectors.toList())
+                .forEach(x -> bookStores.addAll(FutureUtils.getFutureItem(x).orElse(Collections.emptyList())));
+
+        return bookStores;
 
     }
+
+    private Book mapBook(NaverBook.Item item) {
+        return new Book(item.getTitle(), item.getDescription());
+    }
+
 }

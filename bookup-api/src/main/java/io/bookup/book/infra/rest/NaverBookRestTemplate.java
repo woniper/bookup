@@ -1,10 +1,9 @@
 package io.bookup.book.infra.rest;
 
-import io.bookup.book.domain.NaverBook;
 import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.BookRepository;
 import io.bookup.book.api.Pageable;
-import io.bookup.book.domain.NaverBook.Item;
+import io.bookup.book.infra.rest.NaverBook.Item;
 import java.util.Objects;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
