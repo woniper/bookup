@@ -1,10 +1,11 @@
 package io.bookup.book.infra.rest;
 
+import io.bookup.book.api.Pageable;
 import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.BookRepository;
-import io.bookup.book.api.Pageable;
 import io.bookup.book.infra.rest.NaverBook.Item;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class NaverBookRestTemplate implements BookRepository<NaverBook>, BookFinder<Item> {
+public class NaverBookRestTemplate implements BookRepository<Optional<NaverBook>>, BookFinder<Optional<Item>> {
 
     private final RestTemplate restTemplate;
     private final NaverBookProperties properties;
@@ -30,18 +31,25 @@ public class NaverBookRestTemplate implements BookRepository<NaverBook>, BookFin
     }
 
     @Override
-    public Item findByIsbn(String isbn) {
-        return response(isbn).getItems().stream()
-                .findFirst()
-                .orElse(null);
+    public Optional<Item> findByIsbn(String isbn) {
+        Optional<NaverBook> naverBook = response(isbn);
+
+        if (naverBook.isPresent()) {
+            return naverBook
+                    .get()
+                    .getItems().stream()
+                    .findFirst();
+        }
+
+        return Optional.empty();
     }
 
     @Override
-    public NaverBook findByTitle(String title, Pageable pageable) {
+    public Optional<NaverBook> findByTitle(String title, Pageable pageable) {
         return response(title, pageable);
     }
 
-    private NaverBook response(String query, Pageable pageable) {
+    private Optional<NaverBook> response(String query, Pageable pageable) {
         Assert.notNull(query, "not null query");
 
         String url;
@@ -59,13 +67,13 @@ public class NaverBookRestTemplate implements BookRepository<NaverBook>, BookFin
                 NaverBook.class);
 
         if (Objects.equals(HttpStatus.OK, responseEntity.getStatusCode())) {
-            return responseEntity.getBody();
+            return Optional.of(responseEntity.getBody());
         }
 
-        return null;
+        return Optional.empty();
     }
 
-    private NaverBook response(String query) {
+    private Optional<NaverBook> response(String query) {
         return response(query, null);
     }
 

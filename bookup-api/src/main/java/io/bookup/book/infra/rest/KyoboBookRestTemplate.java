@@ -1,11 +1,14 @@
 package io.bookup.book.infra.rest;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.bookup.book.domain.BookStore;
 import io.bookup.book.infra.BookFinder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +58,37 @@ public class KyoboBookRestTemplate implements BookFinder<List<BookStore>> {
                 .map(x -> new BookStore(x.getStoreName(), properties.createUrl(x.getStoreId(), isbn)))
                 .collect(Collectors.toList());
 
+    }
+
+    @Getter
+    @NoArgsConstructor
+    static class KyoboBookStore {
+
+        private List<KyoboBookStore.Item> items;
+
+        @NoArgsConstructor
+        static class Item {
+
+            @JsonProperty("site")
+            private String site;
+
+            @JsonProperty("qty")
+            private int qty;
+
+            @JsonProperty("code_desc")
+            private String codeDesc;
+
+            String getStoreId() {
+                return this.site;
+            }
+
+            int getAmount() {
+                return this.qty;
+            }
+
+            String getStoreName() {
+                return String.format("교보문고 : %s", this.codeDesc);
+            }
+        }
     }
 }
