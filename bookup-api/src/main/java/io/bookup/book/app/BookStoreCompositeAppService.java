@@ -1,14 +1,13 @@
 package io.bookup.book.app;
 
-import io.bookup.book.domain.Book;
 import io.bookup.book.domain.BookFindService;
 import io.bookup.book.domain.BookStore;
 import io.bookup.book.domain.NotFoundBookException;
+import io.bookup.book.domain.Store;
 import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.crawler.AladinBookCrawler;
 import io.bookup.book.infra.crawler.BandinLunisBookCrawler;
 import io.bookup.book.infra.rest.KyoboBookRestTemplate;
-import io.bookup.common.utils.FutureUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +16,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
+import static io.bookup.common.utils.FutureUtils.getFutureItem;
+
 /**
  * @author woniper
  */
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class BookStoreCompositeAppService {
 
     private final BookFindService bookFindService;
-    private final List<BookFinder<List<BookStore>>> bookStoreFinders;
+    private final List<BookFinder<List<Store>>> bookStoreFinders;
 
     public BookStoreCompositeAppService(BookFindService bookFindService,
                                         AladinBookCrawler aladinBookCrawler,
@@ -39,24 +40,24 @@ public class BookStoreCompositeAppService {
         );
     }
 
-    public Book getBook(String isbn) {
-        CompletableFuture<Book> bookFuture =
+    public BookStore getBook(String isbn) {
+        CompletableFuture<BookStore> bookFuture =
                 CompletableFuture.supplyAsync(() -> bookFindService.getBook(isbn))
-                .thenApplyAsync(x -> x.merge(getBookStores(isbn)));
+                .thenApplyAsync(x -> new BookStore(x, getBookStores(isbn)));
 
-        return FutureUtils.getFutureItem(bookFuture)
+        return getFutureItem(bookFuture)
                 .orElseThrow(() -> new NotFoundBookException(isbn));
     }
 
-    private List<BookStore> getBookStores(String isbn) {
-        List<BookStore> bookStores = new ArrayList<>();
+    private List<Store> getBookStores(String isbn) {
+        List<Store> stores = new ArrayList<>();
 
         bookStoreFinders.stream()
                 .map(x -> CompletableFuture.supplyAsync(() -> x.findByIsbn(isbn)))
                 .collect(Collectors.toList())
-                .forEach(x -> bookStores.addAll(FutureUtils.getFutureItem(x).orElse(Collections.emptyList())));
+                .forEach(x -> stores.addAll(getFutureItem(x).orElse(Collections.emptyList())));
 
-        return bookStores;
+        return stores;
     }
 
 }

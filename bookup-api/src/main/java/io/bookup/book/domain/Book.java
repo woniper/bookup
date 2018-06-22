@@ -1,9 +1,8 @@
 package io.bookup.book.domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,27 +10,27 @@ import lombok.NoArgsConstructor;
  * @author woniper
  */
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 public class Book {
 
     private String title;
     private String description;
-    private Collection<BookStore> bookStores = new ArrayList<>();
+    private String link;
+    private String image;
+    private String author;
+    private String price;
+    private String publisher;
+    private String publishDate;
+    private String isbn;
 
-    public Book(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
-    public Book(String title, String description, Collection<BookStore> bookStores) {
-        this(title, description);
-        this.bookStores = bookStores;
-    }
-
-    public Book merge(Collection<? extends BookStore> bookStores) {
-        if (Objects.nonNull(bookStores) && !bookStores.isEmpty()) {
-            this.bookStores.addAll(bookStores);
+    public String getIsbn() {
+        if (Objects.nonNull(isbn)) {
+            String[] split = isbn.split(" ");
+            return split.length == 2 ? split[1] : split[0];
         }
-        return this;
+
+        return null;
     }
 }

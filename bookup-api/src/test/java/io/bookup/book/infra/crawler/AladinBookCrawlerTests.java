@@ -1,6 +1,6 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.book.domain.BookStore;
+import io.bookup.book.domain.Store;
 import io.bookup.book.infra.BookFinder;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -14,8 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class AladinBookCrawlerTests {
 
-    private BookFinder<List<BookStore>> crawler;
-    private BookFinder<List<BookStore>> notFoundCrawler;
+    private BookFinder<List<Store>> crawler;
+    private BookFinder<List<Store>> notFoundCrawler;
 
     private String isbn = "12398798243";
 
@@ -32,16 +32,16 @@ public class AladinBookCrawlerTests {
 
     @Test
     public void testFindBook() throws Exception {
-        List<BookStore> bookStores = crawler.findByIsbn(isbn);
+        List<Store> stores = crawler.findByIsbn(isbn);
 
-        assertThat(bookStores).isNotEmpty().hasSize(1);
-        assertThat(bookStores.stream().findFirst().get().getStoreName()).contains("알라딘");
+        assertThat(stores).isNotEmpty().hasSize(1);
+        assertThat(stores.stream().findFirst().get().getStoreName()).contains("알라딘");
     }
 
     @Test
     public void testNotFoundFindBook() throws Exception {
-        List<BookStore> book = notFoundCrawler.findByIsbn(isbn);
-        assertThat(book).isNull();
+        List<Store> book = notFoundCrawler.findByIsbn(isbn);
+        assertThat(book).isEmpty();
     }
 
 }

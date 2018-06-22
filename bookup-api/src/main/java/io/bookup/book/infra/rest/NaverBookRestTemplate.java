@@ -1,11 +1,15 @@
 package io.bookup.book.infra.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.bookup.book.api.Pageable;
 import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.BookRepository;
 import io.bookup.book.infra.rest.NaverBook.Item;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,17 +21,21 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author woniper
  */
+@Slf4j
 @Component
 public class NaverBookRestTemplate implements BookRepository<Optional<NaverBook>>, BookFinder<Optional<Item>> {
 
     private final RestTemplate restTemplate;
     private final NaverBookProperties properties;
+    private final ObjectMapper objectMapper;
 
     public NaverBookRestTemplate(RestTemplate restTemplate,
-                                 NaverBookProperties properties) {
+                                 NaverBookProperties properties,
+                                 ObjectMapper objectMapper) {
 
         this.restTemplate = restTemplate;
         this.properties = properties;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -60,14 +68,23 @@ public class NaverBookRestTemplate implements BookRepository<Optional<NaverBook>
             url = properties.createUrl(query);
         }
 
-        ResponseEntity<NaverBook> responseEntity = restTemplate.exchange(
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 new HttpEntity<>(properties.getHeaderMap()),
-                NaverBook.class);
+                String.class);
 
         if (Objects.equals(HttpStatus.OK, responseEntity.getStatusCode())) {
-            return Optional.of(responseEntity.getBody());
+            try {
+                String body = responseEntity
+                        .getBody()
+                        .replaceAll("<b>", StringUtils.EMPTY)
+                        .replaceAll("</b>", StringUtils.EMPTY);
+
+                return Optional.of(objectMapper.readValue(body, NaverBook.class));
+            } catch (IOException e) {
+                log.error("naver book mapping error", e);
+            }
         }
 
         return Optional.empty();

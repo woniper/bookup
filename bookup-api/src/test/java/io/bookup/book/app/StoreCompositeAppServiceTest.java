@@ -2,7 +2,7 @@ package io.bookup.book.app;
 
 import io.bookup.book.domain.Book;
 import io.bookup.book.domain.BookFindService;
-import io.bookup.book.domain.BookStore;
+import io.bookup.book.domain.Store;
 import io.bookup.book.domain.NotFoundBookException;
 import io.bookup.book.infra.crawler.AladinBookCrawler;
 import io.bookup.book.infra.crawler.BandinLunisBookCrawler;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
  * @author woniper
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BookStoreCompositeAppServiceTest {
+public class StoreCompositeAppServiceTest {
 
     private final String isbn = "4689347598347";
 
@@ -66,13 +66,16 @@ public class BookStoreCompositeAppServiceTest {
     public void getBook_교보만_조회() {
         // given
         when(bookFindService.getBook(isbn))
-                .thenReturn(new Book("test title", "test description"));
+                .thenReturn(Book.builder()
+                        .title("test title")
+                        .description("test description")
+                        .build());
 
         when(kyoboBookRestTemplate.findByIsbn(isbn))
                 .thenReturn(Arrays.asList(
-                        new BookStore("test storeName1", "http://kyobo.example.com"),
-                        new BookStore("test storeName2", "http://kyobo.example.com"),
-                        new BookStore("test storeName3", "http://kyobo.example.com")
+                        new Store("test storeName1", "http://kyobo.example.com"),
+                        new Store("test storeName2", "http://kyobo.example.com"),
+                        new Store("test storeName3", "http://kyobo.example.com")
                 ));
 
         when(aladinBookCrawler.findByIsbn(isbn)).thenReturn(Collections.emptyList());
@@ -84,20 +87,23 @@ public class BookStoreCompositeAppServiceTest {
 
         // then
         assertThat(book).isNotNull();
-        assertThat(book.getBookStores()).hasSize(3);
+        assertThat(book.getStores()).hasSize(3);
     }
 
     @Test
     public void getBook_알리딘만_조회() {
         // given
         when(bookFindService.getBook(isbn))
-                .thenReturn(new Book("test title", "test description"));
+                .thenReturn(Book.builder()
+                        .title("test title")
+                        .description("test description")
+                        .build());
 
         when(aladinBookCrawler.findByIsbn(isbn))
                 .thenReturn(Arrays.asList(
-                        new BookStore("test storeName1", "http://aladin.example.com"),
-                        new BookStore("test storeName2", "http://aladin.example.com"),
-                        new BookStore("test storeName3", "http://aladin.example.com")
+                        new Store("test storeName1", "http://aladin.example.com"),
+                        new Store("test storeName2", "http://aladin.example.com"),
+                        new Store("test storeName3", "http://aladin.example.com")
                 ));
 
         when(kyoboBookRestTemplate.findByIsbn(isbn)).thenReturn(Collections.emptyList());
@@ -109,20 +115,23 @@ public class BookStoreCompositeAppServiceTest {
 
         // then
         assertThat(book).isNotNull();
-        assertThat(book.getBookStores()).hasSize(3);
+        assertThat(book.getStores()).hasSize(3);
     }
 
     @Test
     public void getBook_반디만_조회() {
         // given
         when(bookFindService.getBook(isbn))
-                .thenReturn(new Book("test title", "test description"));
+                .thenReturn(Book.builder()
+                        .title("test title")
+                        .description("test description")
+                        .build());
 
         when(bandinLunisBookCrawler.findByIsbn(isbn))
                 .thenReturn(Arrays.asList(
-                        new BookStore("test storeName1", "http://bandi.example.com"),
-                        new BookStore("test storeName2", "http://bandi.example.com"),
-                        new BookStore("test storeName3", "http://bandi.example.com")
+                        new Store("test storeName1", "http://bandi.example.com"),
+                        new Store("test storeName2", "http://bandi.example.com"),
+                        new Store("test storeName3", "http://bandi.example.com")
                 ));
 
         when(kyoboBookRestTemplate.findByIsbn(isbn)).thenReturn(Collections.emptyList());
@@ -134,34 +143,37 @@ public class BookStoreCompositeAppServiceTest {
 
         // then
         assertThat(book).isNotNull();
-        assertThat(book.getBookStores()).hasSize(3);
+        assertThat(book.getStores()).hasSize(3);
     }
 
     @Test
     public void getBook_모든_BookStores_조회() {
         // given
         when(bookFindService.getBook(isbn))
-                .thenReturn(new Book("test title", "test description"));
+                .thenReturn(Book.builder()
+                        .title("test title")
+                        .description("test description")
+                        .build());
 
         when(bandinLunisBookCrawler.findByIsbn(isbn))
                 .thenReturn(Arrays.asList(
-                        new BookStore("test storeName1", "http://bandi.example.com"),
-                        new BookStore("test storeName2", "http://bandi.example.com"),
-                        new BookStore("test storeName3", "http://bandi.example.com")
+                        new Store("test storeName1", "http://bandi.example.com"),
+                        new Store("test storeName2", "http://bandi.example.com"),
+                        new Store("test storeName3", "http://bandi.example.com")
                 ));
 
         when(kyoboBookRestTemplate.findByIsbn(isbn))
                 .thenReturn(Arrays.asList(
-                        new BookStore("test storeName4", "http://kyobo.example.com"),
-                        new BookStore("test storeName5", "http://kyobo.example.com"),
-                        new BookStore("test storeName6", "http://kyobo.example.com")
+                        new Store("test storeName4", "http://kyobo.example.com"),
+                        new Store("test storeName5", "http://kyobo.example.com"),
+                        new Store("test storeName6", "http://kyobo.example.com")
                 ));
 
         when(aladinBookCrawler.findByIsbn(isbn))
                 .thenReturn(Arrays.asList(
-                        new BookStore("test storeName7", "http://aladin.example.com"),
-                        new BookStore("test storeName8", "http://aladin.example.com"),
-                        new BookStore("test storeName9", "http://aladin.example.com")
+                        new Store("test storeName7", "http://aladin.example.com"),
+                        new Store("test storeName8", "http://aladin.example.com"),
+                        new Store("test storeName9", "http://aladin.example.com")
                 ));
 
         // when
@@ -169,6 +181,6 @@ public class BookStoreCompositeAppServiceTest {
 
         // then
         assertThat(book).isNotNull();
-        assertThat(book.getBookStores()).hasSize(9);
+        assertThat(book.getStores()).hasSize(9);
     }
 }

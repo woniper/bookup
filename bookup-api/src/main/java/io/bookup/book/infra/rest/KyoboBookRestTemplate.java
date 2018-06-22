@@ -1,7 +1,7 @@
 package io.bookup.book.infra.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.bookup.book.domain.BookStore;
+import io.bookup.book.domain.Store;
 import io.bookup.book.infra.BookFinder;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class KyoboBookRestTemplate implements BookFinder<List<BookStore>> {
+public class KyoboBookRestTemplate implements BookFinder<List<Store>> {
 
     private final KyoboProperties properties;
     private final RestTemplate restTemplate;
@@ -32,7 +32,7 @@ public class KyoboBookRestTemplate implements BookFinder<List<BookStore>> {
     }
 
     @Override
-    public List<BookStore> findByIsbn(String isbn) {
+    public List<Store> findByIsbn(String isbn) {
         KyoboBookStore kyoboBookStore = response(isbn);
         return mapToBookStore(isbn, kyoboBookStore);
     }
@@ -50,21 +50,20 @@ public class KyoboBookRestTemplate implements BookFinder<List<BookStore>> {
         return null;
     }
 
-    private List<BookStore> mapToBookStore(String isbn, KyoboBookStore kyoboBookStore) {
+    private List<Store> mapToBookStore(String isbn, KyoboBookStore kyoboBookStore) {
         if (StringUtils.isEmpty(isbn) || Objects.isNull(kyoboBookStore)) return Collections.emptyList();
 
         return kyoboBookStore.getItems().stream()
                 .filter(x -> x.getAmount() > 0)
-                .map(x -> new BookStore(x.getStoreName(), properties.createUrl(x.getStoreId(), isbn)))
+                .map(x -> new Store(x.getStoreName(), properties.createUrl(x.getStoreId(), isbn)))
                 .collect(Collectors.toList());
-
     }
 
     @Getter
     @NoArgsConstructor
     static class KyoboBookStore {
 
-        private List<KyoboBookStore.Item> items;
+        private List<Item> items;
 
         @NoArgsConstructor
         static class Item {

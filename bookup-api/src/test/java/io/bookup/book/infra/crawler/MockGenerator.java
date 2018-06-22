@@ -1,6 +1,6 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.book.domain.BookStore;
+import io.bookup.book.domain.Store;
 import io.bookup.book.infra.rest.KyoboBookRestTemplate;
 import io.bookup.book.infra.rest.KyoboProperties;
 import java.io.IOException;
@@ -31,9 +31,9 @@ class MockGenerator {
         when(restTemplate.findByIsbn(anyString()))
                 .thenReturn(
                         Arrays.asList(
-                            new BookStore("test book1", "http://example.com"),
-                            new BookStore("test book2", "http://example.com"),
-                            new BookStore("test book3", "http://example.com")
+                            new Store("test book1", "http://example.com"),
+                            new Store("test book2", "http://example.com"),
+                            new Store("test book3", "http://example.com")
                         ));
 
         return restTemplate;

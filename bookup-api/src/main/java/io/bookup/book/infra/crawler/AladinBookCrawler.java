@@ -1,6 +1,6 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.book.domain.BookStore;
+import io.bookup.book.domain.Store;
 import io.bookup.book.infra.BookFinder;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class AladinBookCrawler implements BookFinder<List<BookStore>> {
+public class AladinBookCrawler implements BookFinder<List<Store>> {
 
     private final String HTML_CLASS_NAME_SS_BOOK_BOX = "ss_book_box";
     private final String HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3 = "usedshop_off_text3";
@@ -35,13 +35,13 @@ public class AladinBookCrawler implements BookFinder<List<BookStore>> {
     }
 
     @Override
-    public List<BookStore> findByIsbn(String isbn) {
+    public List<Store> findByIsbn(String isbn) {
         Element bodyElement = getBodyElement(createUrl(isbn));
 
         return findBookStores(bodyElement);
     }
 
-    private List<BookStore> findBookStores(Element element) {
+    private List<Store> findBookStores(Element element) {
         if (Objects.isNull(element)) return Collections.emptyList();
         if (hasNotBook(element)) return Collections.emptyList();
 
@@ -50,7 +50,7 @@ public class AladinBookCrawler implements BookFinder<List<BookStore>> {
         if (CollectionUtils.isEmpty(boxElements)) return Collections.emptyList();
 
         return getBookStoreElement(boxElements).stream()
-                .map(x -> new BookStore("알라딘 : " + x.text(), getBookStoreHref(x)))
+                .map(x -> new Store("알라딘 : " + x.text(), getBookStoreHref(x)))
                 .collect(Collectors.toList());
     }
 

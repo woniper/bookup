@@ -1,6 +1,6 @@
 package io.bookup.book.infra.crawler;
 
-import io.bookup.book.domain.BookStore;
+import io.bookup.book.domain.Store;
 import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.rest.BandinLunisBook;
 import io.bookup.book.infra.rest.BandinLunisRestTemplate;
@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class BandinLunisBookCrawler implements BookFinder<List<BookStore>> {
+public class BandinLunisBookCrawler implements BookFinder<List<Store>> {
 
     private final String HTML_CLASS_NAME_BOOK_MT3 = "mt3";
     private final String HTML_TAG_NAME_TBODY = "tbody";
@@ -48,7 +48,7 @@ public class BandinLunisBookCrawler implements BookFinder<List<BookStore>> {
     }
 
     @Override
-    public List<BookStore> findByIsbn(String isbn) {
+    public List<Store> findByIsbn(String isbn) {
         String productId = bandinLunisRestTemplate.findByIsbn(isbn)
                 .map(BandinLunisBook::getItems)
                 .orElse(Collections.emptyList()).stream()
@@ -63,10 +63,10 @@ public class BandinLunisBookCrawler implements BookFinder<List<BookStore>> {
         return findBookStores(productId, tbodyElement);
     }
 
-    private List<BookStore> findBookStores(String productId, Element tbodyElement) {
+    private List<Store> findBookStores(String productId, Element tbodyElement) {
         if (Objects.isNull(tbodyElement)) return Collections.emptyList();
 
-        List<BookStore> bookStores = new ArrayList<>();
+        List<Store> stores = new ArrayList<>();
         Elements trs = tbodyElement.getElementsByTag(HTML_TAG_NAME_TR);
 
         for (int trIndex = 0; trIndex < trs.size() - 1; trIndex++) {
@@ -87,17 +87,16 @@ public class BandinLunisBookCrawler implements BookFinder<List<BookStore>> {
                                 .replaceAll("'", "");
 
                         if (StringUtils.hasText(storeName) && amount > 0) {
-                            bookStores.add(new BookStore(
+                            stores.add(new Store(
                                     String.format("반디앤루니스 : %s", storeName),
                                     String.format(hrefUrl, productId, storeId)));
                         }
                     }
-
                 }
             }
         }
 
-        return bookStores;
+        return stores;
     }
 
     private Element getTBodyElement(String productId) {
