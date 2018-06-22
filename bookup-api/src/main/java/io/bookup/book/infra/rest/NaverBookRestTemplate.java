@@ -1,7 +1,7 @@
 package io.bookup.book.infra.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.bookup.book.api.Pageable;
+import io.bookup.book.api.representation.Pageable;
 import io.bookup.book.infra.BookFinder;
 import io.bookup.book.infra.BookRepository;
 import io.bookup.book.infra.rest.NaverBook.Item;

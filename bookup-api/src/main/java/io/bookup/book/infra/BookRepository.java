@@ -1,6 +1,6 @@
 package io.bookup.book.infra;
 
-import io.bookup.book.api.Pageable;
+import io.bookup.book.api.representation.Pageable;
 
 /**
  * @author woniper

@@ -1,6 +1,5 @@
 package io.bookup.book.app;
 
-import io.bookup.book.domain.BookFindService;
 import io.bookup.book.domain.BookStore;
 import io.bookup.book.domain.NotFoundBookException;
 import io.bookup.book.domain.Store;
@@ -24,15 +23,15 @@ import static io.bookup.common.utils.FutureUtils.getFutureItem;
 @Service
 public class BookStoreCompositeAppService {
 
-    private final BookFindService bookFindService;
+    private final BookFindAppService bookFindAppService;
     private final List<BookFinder<List<Store>>> bookStoreFinders;
 
-    public BookStoreCompositeAppService(BookFindService bookFindService,
+    public BookStoreCompositeAppService(BookFindAppService bookFindAppService,
                                         AladinBookCrawler aladinBookCrawler,
                                         BandinLunisBookCrawler bandinLunisBookCrawler,
                                         KyoboBookRestTemplate kyoboBookRestTemplate) {
 
-        this.bookFindService = bookFindService;
+        this.bookFindAppService = bookFindAppService;
         this.bookStoreFinders = Arrays.asList(
                 aladinBookCrawler,
                 bandinLunisBookCrawler,
@@ -42,7 +41,7 @@ public class BookStoreCompositeAppService {
 
     public BookStore getBook(String isbn) {
         CompletableFuture<BookStore> bookFuture =
-                CompletableFuture.supplyAsync(() -> bookFindService.getBook(isbn))
+                CompletableFuture.supplyAsync(() -> bookFindAppService.getBook(isbn))
                 .thenApplyAsync(x -> new BookStore(x, getBookStores(isbn)));
 
         return getFutureItem(bookFuture)

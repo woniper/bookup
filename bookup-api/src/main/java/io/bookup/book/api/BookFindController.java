@@ -1,7 +1,11 @@
 package io.bookup.book.api;
 
+import io.bookup.book.api.representation.Pageable;
+import io.bookup.book.api.representation.PageableBook;
+import io.bookup.book.app.BookFindAppService;
 import io.bookup.book.app.BookStoreCompositeAppService;
-import io.bookup.book.domain.BookFindService;
+import io.bookup.book.domain.Book;
+import io.bookup.book.domain.BookStore;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,27 +20,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookFindController {
 
     private final BookStoreCompositeAppService bookStoreCompositeAppService;
-    private final BookFindService bookFindService;
+    private final BookFindAppService bookFindAppService;
 
     public BookFindController(BookStoreCompositeAppService bookStoreCompositeAppService,
-                              BookFindService bookFindService) {
+                              BookFindAppService bookFindAppService) {
 
         this.bookStoreCompositeAppService = bookStoreCompositeAppService;
-        this.bookFindService = bookFindService;
+        this.bookFindAppService = bookFindAppService;
     }
 
     @GetMapping(value = "/stores/{isbn}")
-    public ResponseEntity<?> findBookStore(@PathVariable("isbn") String isbn) {
+    public ResponseEntity<BookStore> findBookStore(@PathVariable("isbn") String isbn) {
         return ResponseEntity.ok(bookStoreCompositeAppService.getBook(isbn));
     }
 
     @GetMapping("/{isbn}")
-    public ResponseEntity<?> findBooks(@PathVariable("isbn") String isbn) {
-        return ResponseEntity.ok(bookFindService.getBook(isbn));
+    public ResponseEntity<Book> findBooks(@PathVariable("isbn") String isbn) {
+        return ResponseEntity.ok(bookFindAppService.getBook(isbn));
     }
 
     @GetMapping(value = "/{title}", params = {"page", "size"})
-    public ResponseEntity<?> findBooks(@PathVariable("title") String title, Pageable pageable) {
-        return ResponseEntity.ok(bookFindService.getBook(title, pageable));
+    public ResponseEntity<PageableBook> findBooks(@PathVariable("title") String title, Pageable pageable) {
+        return ResponseEntity.ok(bookFindAppService.getBook(title, pageable));
     }
 }

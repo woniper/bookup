@@ -1,7 +1,7 @@
 package io.bookup.book.app;
 
 import io.bookup.book.domain.Book;
-import io.bookup.book.domain.BookFindService;
+import io.bookup.book.domain.BookStore;
 import io.bookup.book.domain.Store;
 import io.bookup.book.domain.NotFoundBookException;
 import io.bookup.book.infra.crawler.AladinBookCrawler;
@@ -28,7 +28,7 @@ public class StoreCompositeAppServiceTest {
     private final String isbn = "4689347598347";
 
     @Mock
-    private BookFindService bookFindService;
+    private BookFindAppService bookFindAppService;
 
     @Mock
     private AladinBookCrawler aladinBookCrawler;
@@ -44,7 +44,7 @@ public class StoreCompositeAppServiceTest {
     @Before
     public void setUp() throws Exception {
         this.service = new BookStoreCompositeAppService(
-                bookFindService,
+                bookFindAppService,
                 aladinBookCrawler,
                 bandinLunisBookCrawler,
                 kyoboBookRestTemplate);
@@ -53,7 +53,7 @@ public class StoreCompositeAppServiceTest {
     @Test(expected = NotFoundBookException.class)
     public void getBook_is_null() {
         // given
-        when(bookFindService.getBook(isbn)).thenReturn(null);
+        when(bookFindAppService.getBook(isbn)).thenThrow(new NotFoundBookException(isbn));
 
         // when
         service.getBook(isbn);
@@ -65,7 +65,7 @@ public class StoreCompositeAppServiceTest {
     @Test
     public void getBook_교보만_조회() {
         // given
-        when(bookFindService.getBook(isbn))
+        when(bookFindAppService.getBook(isbn))
                 .thenReturn(Book.builder()
                         .title("test title")
                         .description("test description")
@@ -83,7 +83,7 @@ public class StoreCompositeAppServiceTest {
         when(bandinLunisBookCrawler.findByIsbn(isbn)).thenReturn(Collections.emptyList());
 
         // when
-        Book book = service.getBook(isbn);
+        BookStore book = service.getBook(isbn);
 
         // then
         assertThat(book).isNotNull();
@@ -93,7 +93,7 @@ public class StoreCompositeAppServiceTest {
     @Test
     public void getBook_알리딘만_조회() {
         // given
-        when(bookFindService.getBook(isbn))
+        when(bookFindAppService.getBook(isbn))
                 .thenReturn(Book.builder()
                         .title("test title")
                         .description("test description")
@@ -111,7 +111,7 @@ public class StoreCompositeAppServiceTest {
         when(bandinLunisBookCrawler.findByIsbn(isbn)).thenReturn(Collections.emptyList());
 
         // when
-        Book book = service.getBook(isbn);
+        BookStore book = service.getBook(isbn);
 
         // then
         assertThat(book).isNotNull();
@@ -121,7 +121,7 @@ public class StoreCompositeAppServiceTest {
     @Test
     public void getBook_반디만_조회() {
         // given
-        when(bookFindService.getBook(isbn))
+        when(bookFindAppService.getBook(isbn))
                 .thenReturn(Book.builder()
                         .title("test title")
                         .description("test description")
@@ -139,7 +139,7 @@ public class StoreCompositeAppServiceTest {
         when(aladinBookCrawler.findByIsbn(isbn)).thenReturn(Collections.emptyList());
 
         // when
-        Book book = service.getBook(isbn);
+        BookStore book = service.getBook(isbn);
 
         // then
         assertThat(book).isNotNull();
@@ -149,7 +149,7 @@ public class StoreCompositeAppServiceTest {
     @Test
     public void getBook_모든_BookStores_조회() {
         // given
-        when(bookFindService.getBook(isbn))
+        when(bookFindAppService.getBook(isbn))
                 .thenReturn(Book.builder()
                         .title("test title")
                         .description("test description")
@@ -177,7 +177,7 @@ public class StoreCompositeAppServiceTest {
                 ));
 
         // when
-        Book book = service.getBook(isbn);
+        BookStore book = service.getBook(isbn);
 
         // then
         assertThat(book).isNotNull();

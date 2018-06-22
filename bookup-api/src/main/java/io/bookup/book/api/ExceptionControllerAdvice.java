@@ -1,6 +1,7 @@
 package io.bookup.book.api;
 
 import io.bookup.book.domain.NotFoundBookException;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,12 +30,9 @@ public class ExceptionControllerAdvice {
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     private static class ErrorResponse {
         private String message;
-
-        @Builder
-        private ErrorResponse(String message) {
-            this.message = message;
-        }
     }
 }
