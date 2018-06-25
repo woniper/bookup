@@ -1,7 +1,7 @@
-package io.bookup.book.infra.crawler;
+package io.bookup.store.infra.crawler;
 
-import io.bookup.book.domain.Store;
-import io.bookup.book.infra.BookFinder;
+import io.bookup.store.domain.Store;
+import io.bookup.store.infra.StoreRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class AladinBookCrawler implements BookFinder<List<Store>> {
+public class AladinCrawler implements StoreRepository {
 
     private final String HTML_CLASS_NAME_SS_BOOK_BOX = "ss_book_box";
     private final String HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3 = "usedshop_off_text3";
@@ -27,8 +27,8 @@ public class AladinBookCrawler implements BookFinder<List<Store>> {
     private final String url;
     private final RestTemplate restTemplate;
 
-    AladinBookCrawler(@Value("${bookup.crawler.aladin.url}") String url,
-                      RestTemplate restTemplate) {
+    AladinCrawler(@Value("${bookup.crawler.aladin.url}") String url,
+                  RestTemplate restTemplate) {
 
         this.url = url;
         this.restTemplate = restTemplate;

@@ -1,5 +1,6 @@
 package io.bookup.book.domain;
 
+import io.bookup.store.domain.Store;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

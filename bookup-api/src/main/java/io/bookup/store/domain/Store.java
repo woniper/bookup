@@ -1,4 +1,4 @@
-package io.bookup.book.domain;
+package io.bookup.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;

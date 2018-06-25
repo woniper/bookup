@@ -2,11 +2,12 @@ package io.bookup.book.app;
 
 import io.bookup.book.domain.Book;
 import io.bookup.book.domain.BookStore;
-import io.bookup.book.domain.Store;
+import io.bookup.store.app.BookStoreCompositeAppService;
+import io.bookup.store.domain.Store;
 import io.bookup.book.domain.NotFoundBookException;
-import io.bookup.book.infra.crawler.AladinBookCrawler;
-import io.bookup.book.infra.crawler.BandinLunisBookCrawler;
-import io.bookup.book.infra.rest.KyoboBookRestTemplate;
+import io.bookup.store.infra.crawler.AladinCrawler;
+import io.bookup.store.infra.crawler.BandinLunisCrawler;
+import io.bookup.store.infra.rest.KyoboRestTemplate;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Before;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.when;
  * @author woniper
  */
 @RunWith(MockitoJUnitRunner.class)
-public class StoreCompositeAppServiceTest {
+public class BookStoreCompositeAppServiceTest {
 
     private final String isbn = "4689347598347";
 
@@ -31,13 +32,13 @@ public class StoreCompositeAppServiceTest {
     private BookFindAppService bookFindAppService;
 
     @Mock
-    private AladinBookCrawler aladinBookCrawler;
+    private AladinCrawler aladinBookCrawler;
 
     @Mock
-    private KyoboBookRestTemplate kyoboBookRestTemplate;
+    private KyoboRestTemplate kyoboBookRestTemplate;
 
     @Mock
-    private BandinLunisBookCrawler bandinLunisBookCrawler;
+    private BandinLunisCrawler bandinLunisBookCrawler;
 
     private BookStoreCompositeAppService service;
 

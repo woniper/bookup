@@ -1,11 +1,11 @@
 package io.bookup.book.api;
 
-import io.bookup.book.api.representation.Pageable;
-import io.bookup.book.api.representation.PageableBook;
 import io.bookup.book.app.BookFindAppService;
-import io.bookup.book.app.BookStoreCompositeAppService;
+import io.bookup.store.app.BookStoreCompositeAppService;
 import io.bookup.book.domain.Book;
 import io.bookup.book.domain.BookStore;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,7 +40,8 @@ public class BookFindController {
     }
 
     @GetMapping(value = "/{title}", params = {"page", "size"})
-    public ResponseEntity<PageableBook> findBooks(@PathVariable("title") String title, Pageable pageable) {
+    public ResponseEntity<Page<Book>> findBooks(@PathVariable("title") String title,
+                                                Pageable pageable) {
         return ResponseEntity.ok(bookFindAppService.getBook(title, pageable));
     }
 }

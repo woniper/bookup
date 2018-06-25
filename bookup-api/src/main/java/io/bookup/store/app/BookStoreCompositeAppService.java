@@ -1,12 +1,13 @@
-package io.bookup.book.app;
+package io.bookup.store.app;
 
+import io.bookup.book.app.BookFindAppService;
 import io.bookup.book.domain.BookStore;
 import io.bookup.book.domain.NotFoundBookException;
-import io.bookup.book.domain.Store;
-import io.bookup.book.infra.BookFinder;
-import io.bookup.book.infra.crawler.AladinBookCrawler;
-import io.bookup.book.infra.crawler.BandinLunisBookCrawler;
-import io.bookup.book.infra.rest.KyoboBookRestTemplate;
+import io.bookup.store.domain.Store;
+import io.bookup.store.infra.StoreRepository;
+import io.bookup.store.infra.crawler.AladinCrawler;
+import io.bookup.store.infra.crawler.BandinLunisCrawler;
+import io.bookup.store.infra.rest.KyoboRestTemplate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,12 +25,12 @@ import static io.bookup.common.utils.FutureUtils.getFutureItem;
 public class BookStoreCompositeAppService {
 
     private final BookFindAppService bookFindAppService;
-    private final List<BookFinder<List<Store>>> bookStoreFinders;
+    private final List<StoreRepository> bookStoreFinders;
 
     public BookStoreCompositeAppService(BookFindAppService bookFindAppService,
-                                        AladinBookCrawler aladinBookCrawler,
-                                        BandinLunisBookCrawler bandinLunisBookCrawler,
-                                        KyoboBookRestTemplate kyoboBookRestTemplate) {
+                                        AladinCrawler aladinBookCrawler,
+                                        BandinLunisCrawler bandinLunisBookCrawler,
+                                        KyoboRestTemplate kyoboBookRestTemplate) {
 
         this.bookFindAppService = bookFindAppService;
         this.bookStoreFinders = Arrays.asList(

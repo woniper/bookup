@@ -1,4 +1,4 @@
-package io.bookup.book.infra.rest;
+package io.bookup.store.infra.rest;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,11 +15,11 @@ public class KyoboProperties {
     private String url;
     private String storeUrl;
 
-    public String createUrl(String isbn) {
+    String createUrl(String isbn) {
         return String.format(url, isbn);
     }
 
-    public String createUrl(String storeId, String storeName) {
+    String createUrl(String storeId, String storeName) {
         return String.format(storeUrl, storeId, storeName);
     }
 }

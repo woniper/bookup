@@ -1,8 +1,8 @@
-package io.bookup.book.infra.crawler;
+package io.bookup.store.infra.crawler;
 
-import io.bookup.book.domain.Store;
-import io.bookup.book.infra.rest.KyoboBookRestTemplate;
-import io.bookup.book.infra.rest.KyoboProperties;
+import io.bookup.store.domain.Store;
+import io.bookup.store.infra.rest.KyoboRestTemplate;
+import io.bookup.store.infra.rest.KyoboProperties;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -26,8 +26,8 @@ class MockGenerator {
         return restTemplate;
     }
 
-    static KyoboBookRestTemplate kyoboBookRestTemplate() {
-        KyoboBookRestTemplate restTemplate = mock(KyoboBookRestTemplate.class);
+    static KyoboRestTemplate kyoboBookRestTemplate() {
+        KyoboRestTemplate restTemplate = mock(KyoboRestTemplate.class);
         when(restTemplate.findByIsbn(anyString()))
                 .thenReturn(
                         Arrays.asList(

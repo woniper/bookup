@@ -26,12 +26,14 @@ repositories {
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework:spring-oxm:5.0.6.RELEASE')
 
     compile('org.projectlombok:lombok:1.16.6')
     compile('org.modelmapper:modelmapper:0.7.5')
     compile('commons-lang:commons-lang:2.6')
     compile('org.jsoup:jsoup:1.10.3')
+    compile('com.h2database:h2')
 
     testCompile('org.mockito:mockito-all:1.10.19')
     testCompile('org.assertj:assertj-core:3.6.1')

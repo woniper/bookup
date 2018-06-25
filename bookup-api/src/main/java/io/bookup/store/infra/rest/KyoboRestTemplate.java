@@ -1,8 +1,8 @@
-package io.bookup.book.infra.rest;
+package io.bookup.store.infra.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.bookup.book.domain.Store;
-import io.bookup.book.infra.BookFinder;
+import io.bookup.store.domain.Store;
+import io.bookup.store.infra.StoreRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -19,13 +19,13 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class KyoboBookRestTemplate implements BookFinder<List<Store>> {
+public class KyoboRestTemplate implements StoreRepository {
 
     private final KyoboProperties properties;
     private final RestTemplate restTemplate;
 
-    public KyoboBookRestTemplate(KyoboProperties properties,
-                                 RestTemplate restTemplate) {
+    public KyoboRestTemplate(KyoboProperties properties,
+                             RestTemplate restTemplate) {
 
         this.properties = properties;
         this.restTemplate = restTemplate;

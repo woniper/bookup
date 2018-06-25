@@ -1,17 +1,21 @@
-package io.bookup.book.infra.crawler;
+package io.bookup.store.infra.crawler;
 
-import io.bookup.book.domain.Store;
-import io.bookup.book.infra.BookFinder;
-import io.bookup.book.infra.rest.BandinLunisBook;
-import io.bookup.book.infra.rest.BandinLunisRestTemplate;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.bookup.store.domain.Store;
+import io.bookup.store.infra.StoreRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -21,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class BandinLunisBookCrawler implements BookFinder<List<Store>> {
+public class BandinLunisCrawler implements StoreRepository {
 
     private final String HTML_CLASS_NAME_BOOK_MT3 = "mt3";
     private final String HTML_TAG_NAME_TBODY = "tbody";
@@ -32,24 +36,24 @@ public class BandinLunisBookCrawler implements BookFinder<List<Store>> {
     private final String HTML_ATTR_NAME_HREF = "href";
 
     private final String url;
+    private final String storeUrl;
     private final String hrefUrl;
     private final RestTemplate restTemplate;
-    private final BandinLunisRestTemplate bandinLunisRestTemplate;
 
-    public BandinLunisBookCrawler(@Value("${bookup.crawler.bandi.storeUrl}") String url,
-                                  @Value("${bookup.crawler.bandi.hrefUrl}") String hrefUrl,
-                                  RestTemplate restTemplate,
-                                  BandinLunisRestTemplate bandinLunisRestTemplate) {
+    public BandinLunisCrawler(@Value("${bookup.crawler.bandi.url}") String url,
+                              @Value("${bookup.crawler.bandi.storeUrl}") String storeUrl,
+                              @Value("${bookup.crawler.bandi.hrefUrl}") String hrefUrl,
+                              RestTemplate restTemplate) {
 
         this.url = url;
+        this.storeUrl = storeUrl;
         this.hrefUrl = hrefUrl;
         this.restTemplate = restTemplate;
-        this.bandinLunisRestTemplate = bandinLunisRestTemplate;
     }
 
     @Override
     public List<Store> findByIsbn(String isbn) {
-        String productId = bandinLunisRestTemplate.findByIsbn(isbn)
+        String productId = response(isbn)
                 .map(BandinLunisBook::getItems)
                 .orElse(Collections.emptyList()).stream()
                 .findFirst()
@@ -100,7 +104,7 @@ public class BandinLunisBookCrawler implements BookFinder<List<Store>> {
     }
 
     private Element getTBodyElement(String productId) {
-        Element bodyElement = getBodyElement(String.format(url, productId));
+        Element bodyElement = getBodyElement(String.format(storeUrl, productId));
 
         if (hasNotBook(bodyElement)) return null;
 
@@ -120,5 +124,40 @@ public class BandinLunisBookCrawler implements BookFinder<List<Store>> {
     private Element getBodyElement(String url) {
         String html = restTemplate.getForObject(url, String.class);
         return Jsoup.parse(html).body();
+    }
+
+    private Optional<BandinLunisBook> response(String isbn) {
+        ResponseEntity<BandinLunisBook> responseEntity =
+                restTemplate.getForEntity(String.format(url, isbn), BandinLunisBook.class);
+
+        if (Objects.equals(HttpStatus.OK, responseEntity.getStatusCode())) {
+            return Optional.of(responseEntity.getBody());
+        }
+
+        return Optional.empty();
+    }
+
+    @Getter
+    @NoArgsConstructor
+    static class BandinLunisBook {
+
+        @JsonProperty("result")
+        private List<Item> items;
+
+        @Getter
+        @NoArgsConstructor
+        static class Item {
+            @JsonProperty("prod_id")
+            private String productId;
+
+            @JsonProperty("prod_name")
+            private String title;
+
+            @JsonProperty("contents_description")
+            private String description;
+
+            @JsonProperty("barcode")
+            private String isbn;
+        }
     }
 }

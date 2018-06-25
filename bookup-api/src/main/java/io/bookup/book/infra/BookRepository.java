@@ -1,12 +1,17 @@
 package io.bookup.book.infra;
 
-import io.bookup.book.api.representation.Pageable;
+import io.bookup.book.domain.Book;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author woniper
  */
-public interface BookRepository<T> {
+public interface BookRepository {
 
-    T findByTitle(String title, Pageable pageable);
+    Optional<Book> findByIsbn(String isbn);
+
+    Page<Book> findByTitle(String title, Pageable pageable);
 
 }
