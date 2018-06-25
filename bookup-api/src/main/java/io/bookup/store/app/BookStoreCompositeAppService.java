@@ -5,11 +5,7 @@ import io.bookup.book.domain.NotFoundBookException;
 import io.bookup.store.domain.BookStore;
 import io.bookup.store.domain.Store;
 import io.bookup.store.infra.StoreRepository;
-import io.bookup.store.infra.crawler.AladinCrawler;
-import io.bookup.store.infra.crawler.BandinLunisCrawler;
-import io.bookup.store.infra.rest.KyoboRestTemplate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -27,19 +23,13 @@ import static io.bookup.common.utils.FutureUtils.getFutureItem;
 public class BookStoreCompositeAppService {
 
     private final BookFindAppService bookFindAppService;
-    private final List<StoreRepository> bookStoreFinders;
+    private final List<StoreRepository> storeRepositories;
 
     public BookStoreCompositeAppService(BookFindAppService bookFindAppService,
-                                        AladinCrawler aladinBookCrawler,
-                                        BandinLunisCrawler bandinLunisBookCrawler,
-                                        KyoboRestTemplate kyoboBookRestTemplate) {
+                                        List<StoreRepository> storeRepositories) {
 
         this.bookFindAppService = bookFindAppService;
-        this.bookStoreFinders = Arrays.asList(
-                aladinBookCrawler,
-                bandinLunisBookCrawler,
-                kyoboBookRestTemplate
-        );
+        this.storeRepositories = storeRepositories;
     }
 
     public BookStore getBook(String isbn) {
@@ -56,7 +46,7 @@ public class BookStoreCompositeAppService {
     private List<Store> getBookStores(String isbn) {
         List<Store> stores = new ArrayList<>();
 
-        bookStoreFinders.stream()
+        storeRepositories.stream()
                 .map(x -> CompletableFuture.supplyAsync(() -> x.findByIsbn(isbn)))
                 .collect(Collectors.toList())
                 .forEach(x -> stores.addAll(getFutureItem(x).orElse(Collections.emptyList())));
