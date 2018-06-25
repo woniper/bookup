@@ -1,8 +1,6 @@
 package io.bookup.book.api;
 
 import io.bookup.book.domain.NotFoundBookException;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,19 +18,27 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(NotFoundBookException.class)
     public ResponseEntity<ErrorResponse> notFoundBook(NotFoundBookException exception) {
+        return badRequest(exception);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> illegalArgument(IllegalArgumentException exception) {
+        return badRequest(exception);
+    }
+
+    private ResponseEntity<ErrorResponse> badRequest(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse
-                        .builder()
-                        .message(exception.getMessage())
-                        .build());
+                .body(new ErrorResponse(exception.getMessage()));
     }
 
     @Getter
     @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
     private static class ErrorResponse {
         private String message;
+
+        ErrorResponse(String message) {
+            this.message = message;
+        }
     }
 }

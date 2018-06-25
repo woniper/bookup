@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import static io.bookup.common.utils.FutureUtils.getFutureItem;
 
@@ -41,6 +43,8 @@ public class BookStoreCompositeAppService {
     }
 
     public BookStore getBook(String isbn) {
+        Assert.isTrue(StringUtils.isNumeric(isbn), "잘못된 isbn 입니다.");
+
         CompletableFuture<BookStore> bookFuture =
                 CompletableFuture.supplyAsync(() -> bookFindAppService.getBook(isbn))
                 .thenApplyAsync(x -> new BookStore(x, getBookStores(isbn)));
