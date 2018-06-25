@@ -1,8 +1,8 @@
 package io.bookup.store.app;
 
 import io.bookup.book.app.BookFindAppService;
-import io.bookup.book.domain.BookStore;
 import io.bookup.book.domain.NotFoundBookException;
+import io.bookup.store.domain.BookStore;
 import io.bookup.store.domain.Store;
 import io.bookup.store.infra.StoreRepository;
 import io.bookup.store.infra.crawler.AladinCrawler;

@@ -1,9 +1,7 @@
 package io.bookup.book.api;
 
 import io.bookup.book.app.BookFindAppService;
-import io.bookup.store.app.BookStoreCompositeAppService;
 import io.bookup.book.domain.Book;
-import io.bookup.book.domain.BookStore;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,21 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/books")
-public class BookFindController {
+public class BookController {
 
-    private final BookStoreCompositeAppService bookStoreCompositeAppService;
     private final BookFindAppService bookFindAppService;
 
-    public BookFindController(BookStoreCompositeAppService bookStoreCompositeAppService,
-                              BookFindAppService bookFindAppService) {
-
-        this.bookStoreCompositeAppService = bookStoreCompositeAppService;
+    public BookController(BookFindAppService bookFindAppService) {
         this.bookFindAppService = bookFindAppService;
-    }
-
-    @GetMapping(value = "/stores/{isbn}")
-    public ResponseEntity<BookStore> findBookStore(@PathVariable("isbn") String isbn) {
-        return ResponseEntity.ok(bookStoreCompositeAppService.getBook(isbn));
     }
 
     @GetMapping("/{isbn}")

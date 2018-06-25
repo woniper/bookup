@@ -1,6 +1,6 @@
-package io.bookup.book.domain;
+package io.bookup.store.domain;
 
-import io.bookup.store.domain.Store;
+import io.bookup.book.domain.Book;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

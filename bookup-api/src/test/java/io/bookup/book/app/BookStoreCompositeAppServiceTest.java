@@ -1,7 +1,7 @@
 package io.bookup.book.app;
 
 import io.bookup.book.domain.Book;
-import io.bookup.book.domain.BookStore;
+import io.bookup.store.domain.BookStore;
 import io.bookup.store.app.BookStoreCompositeAppService;
 import io.bookup.store.domain.Store;
 import io.bookup.book.domain.NotFoundBookException;
