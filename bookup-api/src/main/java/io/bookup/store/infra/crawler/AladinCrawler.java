@@ -36,21 +36,20 @@ public class AladinCrawler implements StoreRepository {
 
     @Override
     public List<Store> findByIsbn(String isbn) {
-        Element bodyElement = getBodyElement(createUrl(isbn));
-
-        return findBookStores(bodyElement);
+        return findBookStores(getBodyElement(String.format(this.url, isbn)));
     }
 
     private List<Store> findBookStores(Element element) {
-        if (Objects.isNull(element)) return Collections.emptyList();
-        if (hasNotBook(element)) return Collections.emptyList();
+        if (Objects.isNull(element) || hasNotBook(element)) return Collections.emptyList();
 
         Elements boxElements = element.getElementsByClass(HTML_CLASS_NAME_SS_BOOK_BOX);
 
         if (CollectionUtils.isEmpty(boxElements)) return Collections.emptyList();
 
-        return getBookStoreElement(boxElements).stream()
-                .map(x -> new Store("알라딘 : " + x.text(), getBookStoreHref(x)))
+        return boxElements.first().getElementsByClass(HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3).stream()
+                .map(x -> new Store(
+                        "알라딘 : " + x.text(),
+                        x.attr(HTML_ATTRIBUTE_NAME_HREF)))
                 .collect(Collectors.toList());
     }
 
@@ -58,19 +57,6 @@ public class AladinCrawler implements StoreRepository {
         if (Objects.isNull(bodyElement)) return false;
 
         return !bodyElement.getAllElements().hasClass(HTML_CLASS_NAME_SS_BOOK_BOX);
-    }
-
-    private String createUrl(String isbn) {
-        return String.format(this.url, isbn);
-    }
-
-    private String getBookStoreHref(Element element) {
-        return element.attr(HTML_ATTRIBUTE_NAME_HREF);
-    }
-
-    private Elements getBookStoreElement(Elements elements) {
-        Element bookElement = elements.first();
-        return bookElement.getElementsByClass(HTML_CLASS_NAME_USED_SHOP_OFF_TEXT3);
     }
 
     private Element getBodyElement(String url) {

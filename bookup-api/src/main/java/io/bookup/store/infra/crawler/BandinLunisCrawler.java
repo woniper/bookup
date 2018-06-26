@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -35,19 +34,13 @@ public class BandinLunisCrawler implements StoreRepository {
     private final String HTML_TAG_NAME_A = "a";
     private final String HTML_ATTR_NAME_HREF = "href";
 
-    private final String url;
-    private final String storeUrl;
-    private final String hrefUrl;
+    private final BandinLunisProperties properties;
     private final RestTemplate restTemplate;
 
-    public BandinLunisCrawler(@Value("${bookup.crawler.bandi.url}") String url,
-                              @Value("${bookup.crawler.bandi.storeUrl}") String storeUrl,
-                              @Value("${bookup.crawler.bandi.hrefUrl}") String hrefUrl,
+    public BandinLunisCrawler(BandinLunisProperties properties,
                               RestTemplate restTemplate) {
 
-        this.url = url;
-        this.storeUrl = storeUrl;
-        this.hrefUrl = hrefUrl;
+        this.properties = properties;
         this.restTemplate = restTemplate;
     }
 
@@ -71,16 +64,16 @@ public class BandinLunisCrawler implements StoreRepository {
         if (Objects.isNull(tbodyElement)) return Collections.emptyList();
 
         List<Store> stores = new ArrayList<>();
-        Elements trs = tbodyElement.getElementsByTag(HTML_TAG_NAME_TR);
+        Elements storeTable = tbodyElement.getElementsByTag(HTML_TAG_NAME_TR);
 
-        for (int trIndex = 0; trIndex < trs.size() - 1; trIndex++) {
-            Elements ths = trs.get(trIndex).getElementsByTag(HTML_TAG_NAME_TH);
-            Elements tds = trs.get(trIndex + 1).getElementsByTag(HTML_TAG_NAME_TD);
+        for (int tableIndex = 0; tableIndex < storeTable.size() - 1; tableIndex++) {
+            Elements storeNameElements = storeTable.get(tableIndex).getElementsByTag(HTML_TAG_NAME_TH);
+            Elements storeAmountElements = storeTable.get(tableIndex + 1).getElementsByTag(HTML_TAG_NAME_TD);
 
-            if (ths.size() == tds.size()) {
-                for (int thIndex = 0; thIndex < ths.size(); thIndex++) {
-                    String storeName = ths.get(thIndex).text().trim();
-                    Elements aElements = tds.get(thIndex).getElementsByTag(HTML_TAG_NAME_A);
+            if (Objects.equals(storeNameElements.size(), storeAmountElements.size())) {
+                for (int headerIndex = 0; headerIndex < storeNameElements.size(); headerIndex++) {
+                    String storeName = storeNameElements.get(headerIndex).text().trim();
+                    Elements aElements = storeAmountElements.get(headerIndex).getElementsByTag(HTML_TAG_NAME_A);
 
                     if (!CollectionUtils.isEmpty(aElements)) {
                         int amount = Integer.parseInt(aElements.first().text().trim());
@@ -93,7 +86,7 @@ public class BandinLunisCrawler implements StoreRepository {
                         if (StringUtils.hasText(storeName) && amount > 0) {
                             stores.add(new Store(
                                     String.format("반디앤루니스 : %s", storeName),
-                                    String.format(hrefUrl, productId, storeId)));
+                                    properties.createHrefUrl(productId, storeId)));
                         }
                     }
                 }
@@ -104,7 +97,7 @@ public class BandinLunisCrawler implements StoreRepository {
     }
 
     private Element getTBodyElement(String productId) {
-        Element bodyElement = getBodyElement(String.format(storeUrl, productId));
+        Element bodyElement = getBodyElement(properties.createStoreUrl(productId));
 
         if (hasNotBook(bodyElement)) return null;
 
@@ -128,7 +121,7 @@ public class BandinLunisCrawler implements StoreRepository {
 
     private Optional<BandinLunisBook> response(String isbn) {
         ResponseEntity<BandinLunisBook> responseEntity =
-                restTemplate.getForEntity(String.format(url, isbn), BandinLunisBook.class);
+                restTemplate.getForEntity(properties.createApiUrl(isbn), BandinLunisBook.class);
 
         if (Objects.equals(HttpStatus.OK, responseEntity.getStatusCode())) {
             return Optional.of(responseEntity.getBody());

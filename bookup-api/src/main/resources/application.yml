@@ -2,7 +2,7 @@ bookup:
   crawler:
     aladin.url: "http://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=UsedStore&SearchWord=%s"
     bandi:
-      url: "http://222.122.120.242:7570/ksf/api/search?q=%s&egp=09,10&l=20&sn=product"
+      apiUrl: "http://222.122.120.242:7570/ksf/api/search?q=%s&egp=09,10&l=20&sn=product"
       storeUrl: "http://www.bandinlunis.com/front/product/detailProduct.do?prodId=%s"
       hrefUrl: "http://www.bandinlunis.com/front/product/detailBookshelf.do?prodId=%s&shopCd=%s"
   rest:

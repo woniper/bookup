@@ -17,11 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -89,7 +91,7 @@ public class NaverRestTemplate implements BookRepository {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                new HttpEntity<>(properties.getHeaderMap()),
+                new HttpEntity<>(getHeaderMap()),
                 String.class);
 
         if (Objects.equals(HttpStatus.OK, responseEntity.getStatusCode())) {
@@ -106,6 +108,14 @@ public class NaverRestTemplate implements BookRepository {
         }
 
         return Optional.empty();
+    }
+
+    MultiValueMap<String, String> getHeaderMap() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("X-Naver-Client-Id", Collections.singletonList(properties.getClientId()));
+        headers.put("X-Naver-Client-Secret", Collections.singletonList(properties.getClientSecret()));
+
+        return headers;
     }
 
     private Optional<NaverBook> response(String query) {
