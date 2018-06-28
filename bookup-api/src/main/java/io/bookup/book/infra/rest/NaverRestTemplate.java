@@ -127,7 +127,7 @@ public class NaverRestTemplate implements BookRepository {
                 .title(item.getTitle())
                 .description(item.getDescription())
                 .link(item.getLink())
-                .image(item.getDescription())
+                .image(item.getImage())
                 .author(item.getAuthor())
                 .price(item.getPrice())
                 .publisher(item.getPublisher())
