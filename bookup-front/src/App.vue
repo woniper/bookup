@@ -31,8 +31,9 @@
     },
 
     methods: {
-      search () {
-        this.$eventBus.$emit('bookSearchResponse', api.get('books/' + this.keyword + '?page=0&size=20'))
+      async search () {
+        this.$eventBus.$emit('bookSearchResponse', await api.get('books/' + this.keyword + '?page=0&size=20'))
+        this.$eventBus.$emit('keyword', await this.keyword)
       }
     }
 

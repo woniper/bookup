@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <div class="container" v-for="book in bookSearchResponse.content">
+  <v-infinite-scroll :loading="loading" @bottom="nextPage"
+                     style="max-height: 80vh; overflow-y: scroll;">
+
+    <div class="container" v-for="book in content">
       <div class="row">
         <div class="col-md-2">
           <a href="#">
@@ -15,25 +17,62 @@
       </div>
       <hr>
     </div>
-  </div>
+  </v-infinite-scroll>
 </template>
 
 <script>
+  import Vue from 'vue'
+  import InfiniteScroll from 'v-infinite-scroll'
+  import 'v-infinite-scroll/dist/v-infinite-scroll.css'
+  import api from '@/api'
+
+  Vue.use(InfiniteScroll)
+
   export default {
     name: 'search',
+
     data () {
       return {
-        bookSearchResponse: {}
+        loading: false,
+        keyword: '',
+        pageable: {
+          page: 0,
+          last: false
+        },
+        content: []
       }
     },
 
     created () {
-      this.$eventBus.$on('bookSearchResponse', this.onReceive)
+      this.$eventBus.$on('bookSearchResponse', this.onReceiveResponse)
+      this.$eventBus.$on('keyword', this.onReceiveKeyword)
     },
 
     methods: {
-      async onReceive (bookSearchResponse) {
-        this.bookSearchResponse = await bookSearchResponse
+      nextPage () {
+        if (!this.pageable.last) {
+          this.loading = true
+          this.pageable.page++
+          this.request()
+          this.loading = false
+        }
+      },
+
+      async request () {
+        this.$eventBus.$on('keyword', this.onReceiveKeyword)
+        let response = await api.get('books/' + this.keyword + '?page=' + this.pageable.page + '&size=20')
+        this.content.push.apply(this.content, response.content)
+        this.pageable.last = response.last
+      },
+
+      onReceiveResponse (response) {
+        this.content = response.content
+        this.pageable.page++
+        this.pageable.last = response.last
+      },
+
+      onReceiveKeyword (keyword) {
+        this.keyword = keyword
       }
     }
   }

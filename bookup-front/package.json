@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "v-infinite-scroll": "^1.0.4",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
