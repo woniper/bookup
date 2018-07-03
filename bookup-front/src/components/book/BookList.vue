@@ -3,7 +3,7 @@
                      style="max-height: 80vh; overflow-y: scroll;">
 
     <div class="container" v-for="book in content">
-      <div class="row">
+      <div class="row" v-on:click="clickBook(book)">
         <div class="col-md-2">
           <a href="#">
             <img class="img-book img-fluid rounded mb-3 mb-md-0" v-bind:src="book.image">
@@ -25,6 +25,7 @@
   import InfiniteScroll from 'v-infinite-scroll'
   import 'v-infinite-scroll/dist/v-infinite-scroll.css'
   import api from '@/api'
+  import StoreModel from '../../models/StoreModel'
 
   Vue.use(InfiniteScroll)
 
@@ -73,6 +74,23 @@
 
       onReceiveKeyword (keyword) {
         this.keyword = keyword
+      },
+
+      clickBook (book) {
+        StoreModel.getStores(book.isbn).then(stores => {
+          if (stores.length <= 0) {
+            alert('모든 서점에서 도서를 찾을 수 없습니다.')
+            return
+          }
+
+          let message = ''
+
+          stores.forEach(function (store) {
+            message += store.storeName + '\n'
+          })
+
+          alert(message)
+        })
       }
     }
   }
