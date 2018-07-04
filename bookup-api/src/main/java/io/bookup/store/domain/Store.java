@@ -1,9 +1,16 @@
 package io.bookup.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.bookup.store.infra.StoreRepository;
+import io.bookup.store.infra.crawler.AladinCrawler;
+import io.bookup.store.infra.crawler.BandinLunisCrawler;
+import io.bookup.store.infra.rest.KyoboRestTemplate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Getter;
 
 /**
@@ -23,19 +30,25 @@ public class Store {
         this.href = href;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public enum StoreType {
 
-        Store store = (Store) o;
+        ALADIN(AladinCrawler.class),
+        BANDI(BandinLunisCrawler.class),
+        KYOBO(KyoboRestTemplate.class);
 
-        if (storeName != null ? !storeName.equals(store.storeName) : store.storeName != null) return false;
-        return href != null ? href.equals(store.href) : store.href == null;
+        private Class<? extends StoreRepository> repositoryClass;
+
+        StoreType(Class<? extends StoreRepository> repositoryClass) {
+            this.repositoryClass = repositoryClass;
+        }
+
+        public boolean typeEquals(Class<? extends StoreRepository> repositoryClass) {
+            return Objects.equals(this.repositoryClass.getName(), repositoryClass.getName());
+        }
+
+        public static Set<StoreType> getTypes() {
+            return Stream.of(values()).collect(Collectors.toSet());
+        }
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(storeName, href);
-    }
 }
