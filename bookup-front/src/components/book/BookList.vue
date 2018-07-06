@@ -20,9 +20,11 @@
       </div>
     </v-infinite-scroll>
 
-    <modal name="storeModal" :scrollable="true" height="auto">
-      <div v-for="store in stores">
-        <a v-bind:href="store.href" target="_blank"> {{ store.storeName }} </a>
+    <modal name="storeModal" :scrollable="true" height="auto" width="300px">
+      <div class="list-group" v-for="store in stores">
+        <a class="list-group-item list-group-item-action" v-bind:href="store.href" target="_blank">
+          {{ store.storeName }}
+        </a>
       </div>
     </modal>
   </div>
