@@ -61,7 +61,6 @@
     },
 
     created () {
-      this.$eventBus.$on('bookSearchResponse', this.onReceiveResponse)
       this.$eventBus.$on('keyword', this.onReceiveKeyword)
     },
 
@@ -82,14 +81,13 @@
         this.pageable.last = response.last
       },
 
-      onReceiveResponse (response) {
-        this.content = response.content
-        this.pageable.page++
-        this.pageable.last = response.last
-      },
-
       onReceiveKeyword (keyword) {
         this.keyword = keyword
+        api.get('books/' + keyword + '?page=0&size=20').then(response => {
+          this.content = response.content
+          this.pageable.page++
+          this.pageable.last = response.last
+        })
       },
 
       clickBook (book) {

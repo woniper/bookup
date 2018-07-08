@@ -6,7 +6,9 @@
         <a class="navbar-brand" href="#">BOOKUP</a>
         <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="search" v-model="keyword" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="search">Search</button>
+          <router-link to="/">
+            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="search">Search</button>
+          </router-link>
         </form>
       </nav>
     </header>
@@ -19,8 +21,6 @@
 </template>
 
 <script>
-  import api from '@/api'
-
   export default {
     name: 'app',
 
@@ -31,9 +31,8 @@
     },
 
     methods: {
-      async search () {
-        this.$eventBus.$emit('bookSearchResponse', await api.get('books/' + this.keyword + '?page=0&size=20'))
-        this.$eventBus.$emit('keyword', await this.keyword)
+      search () {
+        this.$eventBus.$emit('keyword', this.keyword)
       }
     }
 
