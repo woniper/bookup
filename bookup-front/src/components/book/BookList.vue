@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-infinite-scroll :loading="loading" @bottom="nextPage"
+    <v-infinite-scroll @bottom="nextPage" class="scroll"
                        style="max-height: 80vh; overflow-y: scroll;">
 
       <div class="container" v-for="book in content" style="cursor: pointer;">
@@ -49,7 +49,6 @@
 
     data () {
       return {
-        loading: false,
         keyword: '',
         pageable: {
           page: 0,
@@ -67,10 +66,8 @@
     methods: {
       nextPage () {
         if (!this.pageable.last) {
-          this.loading = true
           this.pageable.page++
           this.request()
-          this.loading = false
         }
       },
 
@@ -82,12 +79,17 @@
       },
 
       onReceiveKeyword (keyword) {
+        this.scrollToTop()
         this.keyword = keyword
         api.get('books/' + keyword + '?page=0&size=20').then(response => {
           this.content = response.content
           this.pageable.page++
           this.pageable.last = response.last
         })
+      },
+
+      scrollToTop () {
+        document.querySelector('.scroll').scrollTop = 0
       },
 
       clickBook (book) {
