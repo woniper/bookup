@@ -42,7 +42,7 @@
 <style>
   body {
     width: 70%;
-    margin: 0 auto;
+    margin: 0 auto !important;
   }
 
   #app {
