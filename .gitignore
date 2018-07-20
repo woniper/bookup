@@ -12,3 +12,4 @@ build
 gen
 .DS_Store
 application-default.yml
+!gradle-wrapper.jar
