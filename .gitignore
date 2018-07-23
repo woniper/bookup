@@ -8,6 +8,7 @@ build
 *.jar
 *.war
 *.ear
+bin
 
 gen
 .DS_Store
