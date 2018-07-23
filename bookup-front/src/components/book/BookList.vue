@@ -1,14 +1,10 @@
 <template>
   <div>
-    <v-infinite-scroll @bottom="nextPage" class="scroll"
-                       style="max-height: 80vh; overflow-y: scroll;">
-
-      <div class="container" v-for="book in content" style="cursor: pointer;">
-        <div class="row" v-on:click="clickBook(book)">
+    <v-infinite-scroll @bottom="nextPage" class="scroll" style="max-height: 80vh; overflow-y: scroll;">
+      <div class="container-fluid" v-for="book in content" style="cursor: pointer;">
+        <div class="row" v-on:click="openModal(book)">
           <div class="col-md-2">
-            <a href="#">
-              <img class="img-book img-fluid rounded mb-3 mb-md-0" v-bind:src="book.image">
-            </a>
+            <img class="img-book img-fluid rounded mb-3 mb-md-0" v-bind:src="book.image">
           </div>
           <div class="col-md-10">
             <h3 class="book-title">{{ book.title }}</h3>
@@ -20,13 +16,9 @@
       </div>
     </v-infinite-scroll>
 
-    <modal name="storeModal" :scrollable="true" height="auto" width="300px">
-      <div class="list-group" v-for="store in stores">
-        <a class="list-group-item list-group-item-action" v-bind:href="store.href" target="_blank">
-          {{ store.storeName }}
-        </a>
-      </div>
-    </modal>
+    <b-notification :closable="false">
+      <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="true"></b-loading>
+    </b-notification>
   </div>
 
 </template>
@@ -35,20 +27,51 @@
   import Vue from 'vue'
   import InfiniteScroll from 'v-infinite-scroll'
   import 'v-infinite-scroll/dist/v-infinite-scroll.css'
-
-  // https://www.npmjs.com/package/vue-js-modal
-  import VModal from 'vue-js-modal'
   import api from '@/api'
   import StoreModel from '../../models/StoreModel'
+  import Buefy from 'buefy'
+  import 'buefy/lib/buefy.css'
 
   Vue.use(InfiniteScroll)
-  Vue.use(VModal)
+  Vue.use(Buefy)
+
+  const StoresModal = {
+    props: ['stores'],
+
+    template: `
+      <form action="">
+        <div class="modal-card" style="width: auto">
+          <header class="modal-card-head">
+            <p class="modal-card-title">도서 보유 서점</p>
+          </header>
+          <section class="modal-card-body">
+            <div class="container-fluid" v-for="store in stores" style="cursor: pointer;">
+              <div class="row">
+                <a v-bind:href="store.href" target="_blank">
+                  {{ store.storeName }}
+                </a>
+                <hr>
+              </div>
+            </div>
+          </section>
+          <footer class="modal-card-foot">
+              <a class="button is-danger is-fullwidth" @click="$parent.close()">close</a>
+          </footer>
+        </div>
+    </form>
+    `
+  }
 
   export default {
     name: 'search',
 
+    components: {
+      StoresModal
+    },
+
     data () {
       return {
+        isLoading: false,
         keyword: '',
         pageable: {
           page: 0,
@@ -92,16 +115,31 @@
         document.querySelector('.scroll').scrollTop = 0
       },
 
-      clickBook (book) {
+      openModal (book) {
+        this.isLoading = true
         StoreModel.getStores(book.isbn).then(stores => {
+          this.stores = stores
+          this.isLoading = false
+
           if (stores.length <= 0) {
             this.stores = []
-            alert('모든 서점에서 도서를 찾을 수 없습니다.')
+            this.isLoading = false
+            this.$toast.open({
+              duration: 2000,
+              message: '모든 서점에서 도서를 찾을 수 없습니다.',
+              position: 'is-bottom',
+              type: 'is-danger'
+            })
             return
           }
 
-          this.stores = stores
-          this.$modal.show('storeModal')
+          this.$modal.open({
+            width: '50%',
+            props: {
+              stores: this.stores
+            },
+            component: StoresModal
+          })
         })
       }
     }
