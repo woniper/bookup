@@ -9,6 +9,7 @@ build
 *.war
 *.ear
 bin
+logs
 
 gen
 .DS_Store

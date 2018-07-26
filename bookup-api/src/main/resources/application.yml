@@ -10,3 +10,6 @@ bookup:
     kyobo:
       url: "http://mkiosk.kyobobook.co.kr/kiosk/product/ajaxOtherStockQty.ink?site=&ejkGb=KOR&barcode=%s"
       storeUrl: "http://mkiosk.kyobobook.co.kr/kiosk/search/searchMain.ink?site=%s&isbn=%s"
+
+logging:
+  config: classpath:logback-spring.xml
