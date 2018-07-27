@@ -10,6 +10,7 @@ build
 *.ear
 bin
 logs
+out
 
 gen
 .DS_Store
