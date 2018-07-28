@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -41,7 +42,7 @@ public class NationalLibraryRestTemplate implements LibraryRepository {
                 HttpEntity.EMPTY,
                 KorisLibrary.class);
 
-        if (Objects.equals(responseEntity.getStatusCode(), HttpStatus.OK)) {
+        if (isOk(responseEntity)) {
             return new Library(responseEntity.getBody().getItems().stream()
                     .filter(x -> StringUtils.isNotEmpty(x.getLibraryName()) && StringUtils.isNotEmpty(x.getLibraryCode()))
                     .map(x -> new Library.Item(x.getLibraryName(), x.getLibraryCode()))
@@ -49,6 +50,11 @@ public class NationalLibraryRestTemplate implements LibraryRepository {
         }
 
         return new Library(Collections.emptyList());
+    }
+
+    private boolean isOk(ResponseEntity<KorisLibrary> responseEntity) {
+        return Objects.equals(responseEntity.getStatusCode(), HttpStatus.OK) &&
+                !CollectionUtils.isEmpty(responseEntity.getBody().getItems());
     }
 
     @Getter
