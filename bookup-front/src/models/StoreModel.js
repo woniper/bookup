@@ -28,6 +28,15 @@ export default {
     }
 
     return this.stores.get(isbn)
+  },
+
+  convertModalData (stores) {
+    return stores.map(x => {
+      return {
+        name: x.storeName,
+        href: x.href
+      }
+    })
   }
 
 }

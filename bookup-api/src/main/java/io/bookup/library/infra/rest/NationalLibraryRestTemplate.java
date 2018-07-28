@@ -45,7 +45,15 @@ public class NationalLibraryRestTemplate implements LibraryRepository {
         if (isOk(responseEntity)) {
             return new Library(responseEntity.getBody().getItems().stream()
                     .filter(x -> StringUtils.isNotEmpty(x.getLibraryName()) && StringUtils.isNotEmpty(x.getLibraryCode()))
-                    .map(x -> new Library.Item(x.getLibraryName(), x.getLibraryCode()))
+                    .map(x -> {
+                        String libraryName = x.getLibraryName();
+
+                        if ("출판시도서목록센터".equals(libraryName)) {
+                            libraryName = "국립중앙도서관";
+                        }
+
+                        return new Library.Item(libraryName, x.getLibraryCode());
+                    })
                     .collect(Collectors.toList()));
         }
 
