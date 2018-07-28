@@ -1,10 +1,12 @@
 language: java
 jdk: openjdk8
-branchs.only: master
+branchs:
+  only: master
+
 cache:
   directories:
-  - "$HOME/.m2/repository"
-  - "$HOME/.gradle"
+    - "$HOME/.m2/repository"
+    - "$HOME/.gradle"
 
 before_install:
   - sudo apt-get update
