@@ -21,7 +21,7 @@
       </div>
     </v-infinite-scroll>
 
-    <b-notification :closable="false">
+    <b-notification :closable="false" v-show="isLoading">
       <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="true"></b-loading>
     </b-notification>
   </div>
@@ -91,11 +91,13 @@
         },
         content: [],
         stores: [],
-        libraries: []
+        libraries: [],
+        event: null
       }
     },
 
     created () {
+      this.$eventBus.$on('event', this.onEvent)
       this.$eventBus.$on('keyword', this.onReceiveKeyword)
     },
 
@@ -117,11 +119,24 @@
       onReceiveKeyword (keyword) {
         this.scrollToTop()
         this.keyword = keyword
+        let self = this
         api.get('books/' + keyword + '?page=0&size=20').then(response => {
+          if (response.content.length <= 0) {
+            this.toast('찾을 수 없는 도서입니다.')
+          }
+
           this.content = response.content
           this.pageable.page++
           this.pageable.last = response.last
+          this.event.call()
+        }).catch(function (e) {
+          self.toast('찾을 수 없는 도서입니다.')
+          self.event.call()
         })
+      },
+
+      onEvent (event) {
+        this.event = event
       },
 
       scrollToTop () {
@@ -159,10 +174,14 @@
           }
 
           this.openModal('도서 보유 도서관', LibraryModel.convertModalData(this.libraries))
+        }).catch(function (e) {
+          this.libraries = []
+          this.isLoading = false
+          this.toast('모든 도서관에서 도서를 찾을 수 없습니다.')
         })
       },
 
-      toast: function (message) {
+      toast (message) {
         this.$toast.open({
           duration: 2000,
           message: message,

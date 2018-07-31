@@ -7,7 +7,7 @@
         <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="search" v-model="keyword" placeholder="Search" aria-label="Search">
           <router-link to="/">
-            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="search">Search</button>
+            <button class="button is-primary" v-bind:class="isLoadingClass" v-on:click="search">Search</button>
           </router-link>
         </form>
       </nav>
@@ -21,21 +21,33 @@
 </template>
 
 <script>
+  import Vue from 'vue'
+  import Buefy from 'buefy'
+  import 'buefy/lib/buefy.css'
+
+  Vue.use(Buefy)
+
   export default {
     name: 'app',
 
     data () {
       return {
-        keyword: ''
+        keyword: '',
+        isLoadingClass: ''
       }
     },
 
     methods: {
       search () {
+        let self = this
+        this.isLoadingClass = 'is-loading'
+
         this.$eventBus.$emit('keyword', this.keyword)
+        this.$eventBus.$emit('event', function () {
+          self.isLoadingClass = ''
+        })
       }
     }
-
   }
 </script>
 
