@@ -85,6 +85,7 @@
       return {
         isLoading: false,
         keyword: '',
+        selectedStore: '',
         pageable: {
           page: 0,
           last: false
@@ -97,46 +98,54 @@
     },
 
     created () {
-      this.$eventBus.$on('event', this.onEvent)
-      this.$eventBus.$on('keyword', this.onReceiveKeyword)
+      this.$eventBus.$on('event', this.onReceiveEvent)
+      this.$eventBus.$on('searchValue', this.onReceiveSearchValue)
     },
 
     methods: {
-      nextPage () {
+      init () {
+        StoreModel.init()
+        this.scrollToTop()
+        this.request()
+        this.content = []
+        this.stores = []
+        this.libraries = []
+        this.pageable.page = 0
+        this.pageable.last = false
+      },
+
+      async nextPage () {
         if (!this.pageable.last) {
-          this.pageable.page++
           this.request()
         }
       },
 
-      async request () {
-        this.$eventBus.$on('keyword', this.onReceiveKeyword)
-        let response = await api.get('books/' + this.keyword + '?page=' + this.pageable.page + '&size=20')
-        this.content.push.apply(this.content, response.content)
-        this.pageable.last = response.last
+      onReceiveSearchValue (searchValue) {
+        this.keyword = searchValue.keyword
+        this.selectedStore = searchValue.selectedOption
+        this.init()
       },
 
-      onReceiveKeyword (keyword) {
-        this.scrollToTop()
-        this.keyword = keyword
+      onReceiveEvent (event) {
+        this.event = event
+      },
+
+      request () {
         let self = this
-        api.get('books/' + keyword + '?page=0&size=20').then(response => {
+        api.get('books/' + this.keyword + '?page=' + this.pageable.page + '&size=20').then(response => {
           if (response.content.length <= 0) {
             this.toast('찾을 수 없는 도서입니다.')
           }
 
-          this.content = response.content
+          this.content.push.apply(this.content, response.content)
           this.pageable.page++
           this.pageable.last = response.last
           this.event.call()
         }).catch(function (e) {
+          console.log(e)
           self.toast('찾을 수 없는 도서입니다.')
           self.event.call()
         })
-      },
-
-      onEvent (event) {
-        this.event = event
       },
 
       scrollToTop () {
@@ -145,7 +154,7 @@
 
       openStores (book) {
         this.isLoading = true
-        StoreModel.getStores(book.isbn).then(stores => {
+        StoreModel.getStores(book.isbn, this.selectedStore).then(stores => {
           this.stores = stores
           this.isLoading = false
 
@@ -156,7 +165,7 @@
             return
           }
 
-          this.openModal('도서 보유 서점', StoreModel.convertModalData(this.stores))
+          this.modal('도서 보유 서점', StoreModel.convertModalData(this.stores))
         })
       },
 
@@ -173,8 +182,9 @@
             return
           }
 
-          this.openModal('도서 보유 도서관', LibraryModel.convertModalData(this.libraries))
+          this.modal('도서 보유 도서관', LibraryModel.convertModalData(this.libraries))
         }).catch(function (e) {
+          console.log(e)
           this.libraries = []
           this.isLoading = false
           this.toast('모든 도서관에서 도서를 찾을 수 없습니다.')
@@ -190,7 +200,7 @@
         })
       },
 
-      openModal (title, list) {
+      modal (title, list) {
         this.$modal.open({
           width: '50%',
           props: {
