@@ -106,12 +106,12 @@
       init () {
         StoreModel.init()
         this.scrollToTop()
-        this.request()
         this.content = []
         this.stores = []
         this.libraries = []
         this.pageable.page = 0
         this.pageable.last = false
+        this.request()
       },
 
       async nextPage () {
