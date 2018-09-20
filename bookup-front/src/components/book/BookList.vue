@@ -36,7 +36,7 @@
   import StoreModel from '../../models/StoreModel'
   import LibraryModel from '../../models/LibraryModel'
   import Buefy from 'buefy'
-  import 'buefy/lib/buefy.css'
+  import 'buefy/dist/buefy.css'
 
   Vue.use(InfiniteScroll)
   Vue.use(Buefy)
