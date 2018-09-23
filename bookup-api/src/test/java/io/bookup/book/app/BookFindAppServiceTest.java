@@ -25,6 +25,15 @@ public class BookFindAppServiceTest {
     private BookFindAppService service;
 
     @Test(expected = IllegalArgumentException.class)
+    public void getBook_null_isbn() {
+        // when
+        service.getBook(null);
+
+        // then
+        fail();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void getBook_잘못된_isbn() {
         // given
         String wrongIsbn = "9788994492032a";
