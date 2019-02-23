@@ -2,7 +2,7 @@ package io.bookup.store.api;
 
 import io.bookup.store.app.BookStoreCompositeAppService;
 import io.bookup.store.domain.BookStore;
-import io.bookup.store.domain.Store;
+import io.bookup.store.domain.Store.StoreType;
 import java.util.Set;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,7 @@ public class StoreBookController {
 
     @GetMapping(value = "/books/{isbn}")
     public ResponseEntity<BookStore> findBookStore(@PathVariable("isbn") String isbn,
-                                                   @RequestParam(value = "stores", required = false) Set<Store.StoreType> storeTypes) {
+                                                   @RequestParam(value = "stores", required = false) Set<StoreType> storeTypes) {
         return ResponseEntity.ok(bookStoreCompositeAppService.getBook(isbn, storeTypes));
     }
 }
