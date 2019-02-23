@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
+         updateCheck="true"
+         monitoring="autodetect"
+         dynamicConfig="true">
+
+    <!-- 도서 검색 캐시 7일 유지-->
+    <cache
+            name="book"
+            timeToLiveSeconds="604800"
+            maxElementsInMemory="1000"
+            eternal="false"
+            overflowToDisk="false"
+            timeToIdleSeconds="0"
+            memoryStoreEvictionPolicy="LFU"
+            transactionalMode="off"
+    />
+
+    <!-- 서점의 도서 검색 캐시 3시간 유지 -->
+    <cache
+            name="bookStore"
+            timeToLiveSeconds="10800"
+            maxElementsInMemory="1000"
+            eternal="false"
+            overflowToDisk="false"
+            timeToIdleSeconds="0"
+            memoryStoreEvictionPolicy="LFU"
+            transactionalMode="off"
+    />
+
+    <!-- 도서관 도서 검색 캐시 7일 유지-->
+    <cache
+            name="library"
+            timeToLiveSeconds="604800"
+            maxElementsInMemory="1000"
+            eternal="false"
+            overflowToDisk="false"
+            timeToIdleSeconds="0"
+            memoryStoreEvictionPolicy="LFU"
+            transactionalMode="off"
+    />
+
+</ehcache>

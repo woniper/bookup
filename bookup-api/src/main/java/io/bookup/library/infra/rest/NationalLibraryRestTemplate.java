@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class NationalLibraryRestTemplate implements LibraryRepository {
         this.restTemplate = restTemplate;
     }
 
+    @Cacheable(value = "library", key = "#isbn")
     @Override
     public Library findByIsbn(String isbn) {
         ResponseEntity<KorisLibrary> responseEntity = restTemplate.exchange(

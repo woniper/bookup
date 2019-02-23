@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -35,6 +36,7 @@ public class BookStoreCompositeAppService {
         return getBook(isbn, StoreType.getTypes());
     }
 
+    @Cacheable(value = "bookStore", key = "#isbn + #storeTypes")
     public BookStore getBook(String isbn, Set<StoreType> storeTypes) {
         Assert.isTrue(StringUtils.isNumeric(isbn), "잘못된 isbn 입니다.");
 
