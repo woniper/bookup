@@ -1,5 +1,5 @@
 language: java
-jdk: openjdk8
+jdk: openjdk11
 branchs:
   only: master
 
@@ -12,9 +12,11 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install unzip
 
+install: false
+
 script:
   - cd bookup-api
-  - "./gradlew clean build -x test"
+  - "./gradlew clean build"
   - cd ../bookup-front
   - npm install
   - npm run build

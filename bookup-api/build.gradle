@@ -3,12 +3,12 @@ apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
 apply plugin: "idea"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 buildscript {
     ext {
-        springBootVersion = "2.0.2.RELEASE"
+        springBootVersion = "2.1.5.RELEASE"
     }
     repositories {
         mavenCentral()
@@ -29,12 +29,17 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-cache")
     compile("org.springframework:spring-oxm:5.0.6.RELEASE")
 
-    compile("org.projectlombok:lombok:1.16.6")
+    compile("org.projectlombok:lombok")
     compile("org.modelmapper:modelmapper:0.7.5")
     compile("commons-lang:commons-lang:2.6")
     compile("org.jsoup:jsoup:1.10.3")
     compile("com.h2database:h2")
     compile("net.sf.ehcache:ehcache:2.10.6")
+
+    compile("javax.xml:jaxb-api:2.1")
+    compile("com.sun.xml.bind:jaxb-core:2.3.0.1")
+    compile("com.sun.xml.bind:jaxb-impl:2.3.0.1")
+    compile("javax.activation:activation:1.1.1")
 
     testCompile("org.mockito:mockito-all:1.10.19")
     testCompile("org.assertj:assertj-core:3.6.1")
