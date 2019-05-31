@@ -1,7 +1,6 @@
-package io.bookup.store.infra.rest;
+package io.bookup.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.bookup.store.domain.Store;
 import io.bookup.store.infra.StoreRepository;
 import java.util.Collections;
 import java.util.List;
@@ -19,13 +18,13 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class KyoboRestTemplate implements StoreRepository {
+public class KyoboClient implements StoreRepository {
 
     private final KyoboProperties properties;
     private final RestTemplate restTemplate;
 
-    public KyoboRestTemplate(KyoboProperties properties,
-                             RestTemplate restTemplate) {
+    public KyoboClient(KyoboProperties properties,
+                       RestTemplate restTemplate) {
 
         this.properties = properties;
         this.restTemplate = restTemplate;

@@ -1,7 +1,6 @@
-package io.bookup.store.infra.crawler;
+package io.bookup.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.bookup.store.domain.Store;
 import io.bookup.store.infra.StoreRepository;
 import java.util.ArrayList;
 import java.util.Collections;

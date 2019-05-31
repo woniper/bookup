@@ -1,4 +1,4 @@
-package io.bookup.store.infra.rest;
+package io.bookup.store.domain;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

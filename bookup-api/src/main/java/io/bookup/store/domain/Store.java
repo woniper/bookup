@@ -2,9 +2,6 @@ package io.bookup.store.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.bookup.store.infra.StoreRepository;
-import io.bookup.store.infra.crawler.AladinCrawler;
-import io.bookup.store.infra.crawler.BandinLunisCrawler;
-import io.bookup.store.infra.rest.KyoboRestTemplate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -34,7 +31,7 @@ public class Store {
 
         ALADIN(AladinCrawler.class),
         BANDI(BandinLunisCrawler.class),
-        KYOBO(KyoboRestTemplate.class);
+        KYOBO(KyoboClient.class);
 
         private Class<? extends StoreRepository> repositoryClass;
 

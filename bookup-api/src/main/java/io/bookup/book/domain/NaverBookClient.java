@@ -1,7 +1,6 @@
-package io.bookup.book.infra.rest;
+package io.bookup.book.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.bookup.book.domain.Book;
 import io.bookup.book.infra.BookRepository;
 import java.io.IOException;
 import java.util.Collections;
@@ -31,15 +30,15 @@ import org.springframework.web.client.RestTemplate;
  */
 @Slf4j
 @Component
-public class NaverRestTemplate implements BookRepository {
+public class NaverBookClient implements BookRepository {
 
     private final RestTemplate restTemplate;
     private final NaverBookProperties properties;
     private final ObjectMapper objectMapper;
 
-    public NaverRestTemplate(RestTemplate restTemplate,
-                             NaverBookProperties properties,
-                             ObjectMapper objectMapper) {
+    public NaverBookClient(RestTemplate restTemplate,
+                           NaverBookProperties properties,
+                           ObjectMapper objectMapper) {
 
         this.restTemplate = restTemplate;
         this.properties = properties;

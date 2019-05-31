@@ -1,4 +1,4 @@
-package io.bookup.library.infra.rest;
+package io.bookup.library.domain;
 
 import io.bookup.library.domain.Library;
 import io.bookup.library.infra.LibraryRepository;
@@ -24,13 +24,13 @@ import org.springframework.web.client.RestTemplate;
  * @author woniper
  */
 @Component
-public class NationalLibraryRestTemplate implements LibraryRepository {
+public class NationalLibraryClient implements LibraryRepository {
 
     private final String url;
     private final RestTemplate restTemplate;
 
-    public NationalLibraryRestTemplate(@Value("${bookup.rest.library.url}") String url,
-                                       RestTemplate restTemplate) {
+    public NationalLibraryClient(@Value("${bookup.rest.library.url}") String url,
+                                 RestTemplate restTemplate) {
         this.url = url;
         this.restTemplate = restTemplate;
     }

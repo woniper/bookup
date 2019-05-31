@@ -1,9 +1,6 @@
 package io.bookup.store.domain;
 
 import io.bookup.store.domain.Store.StoreType;
-import io.bookup.store.infra.crawler.AladinCrawler;
-import io.bookup.store.infra.crawler.BandinLunisCrawler;
-import io.bookup.store.infra.rest.KyoboRestTemplate;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +32,7 @@ public class StoreTypeTest {
     public void typeEquals_kyoboRestTemplate() {
         StoreType type = StoreType.KYOBO;
 
-        boolean equals = type.typeEquals(KyoboRestTemplate.class);
+        boolean equals = type.typeEquals(KyoboClient.class);
 
         assertThat(equals).isTrue();
     }

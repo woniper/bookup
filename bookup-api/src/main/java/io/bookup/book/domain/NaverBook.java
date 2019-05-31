@@ -1,4 +1,4 @@
-package io.bookup.book.infra.rest;
+package io.bookup.book.domain;
 
 import java.util.List;
 import lombok.Getter;

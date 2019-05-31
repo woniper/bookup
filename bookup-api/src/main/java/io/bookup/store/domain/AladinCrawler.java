@@ -1,4 +1,4 @@
-package io.bookup.store.infra.crawler;
+package io.bookup.store.domain;
 
 import io.bookup.store.domain.Store;
 import io.bookup.store.infra.StoreRepository;

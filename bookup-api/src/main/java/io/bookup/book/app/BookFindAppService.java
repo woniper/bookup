@@ -2,7 +2,7 @@ package io.bookup.book.app;
 
 import io.bookup.book.domain.Book;
 import io.bookup.book.domain.NotFoundBookException;
-import io.bookup.book.infra.rest.NaverRestTemplate;
+import io.bookup.book.domain.NaverBookClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,9 +18,9 @@ import org.springframework.util.Assert;
 @Service
 public class BookFindAppService {
 
-    private final NaverRestTemplate naverBookRestTemplate;
+    private final NaverBookClient naverBookRestTemplate;
 
-    public BookFindAppService(NaverRestTemplate naverBookRestTemplate) {
+    public BookFindAppService(NaverBookClient naverBookRestTemplate) {
         this.naverBookRestTemplate = naverBookRestTemplate;
     }
 

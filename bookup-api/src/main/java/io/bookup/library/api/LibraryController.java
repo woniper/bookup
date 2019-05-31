@@ -1,7 +1,7 @@
 package io.bookup.library.api;
 
 import io.bookup.library.domain.Library;
-import io.bookup.library.infra.rest.NationalLibraryRestTemplate;
+import io.bookup.library.domain.NationalLibraryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/libraries")
 public class LibraryController {
 
-    private final NationalLibraryRestTemplate libraryRestTemplate;
+    private final NationalLibraryClient libraryRestTemplate;
 
-    public LibraryController(NationalLibraryRestTemplate libraryRestTemplate) {
+    public LibraryController(NationalLibraryClient libraryRestTemplate) {
         this.libraryRestTemplate = libraryRestTemplate;
     }
 
