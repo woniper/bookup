@@ -125,12 +125,9 @@ public class NaverBookClient implements BookRepository {
         return Book.builder()
                 .title(item.getTitle())
                 .description(item.getDescription())
-                .link(item.getLink())
                 .image(item.getImage())
                 .author(item.getAuthor())
                 .price(item.getPrice())
-                .publisher(item.getPublisher())
-                .publishDate(item.getPubdate())
                 .isbn(item.getIsbn())
                 .build();
     }

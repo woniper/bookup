@@ -17,12 +17,9 @@ public class Book {
 
     private String title;
     private String description;
-    private String link;
     private String image;
     private String author;
     private String price;
-    private String publisher;
-    private String publishDate;
     private String isbn;
 
     public String getIsbn() {
