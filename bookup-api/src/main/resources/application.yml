@@ -5,6 +5,9 @@ bookup:
       apiUrl: "http://222.122.120.242:7570/ksf/api/search?q=%s&egp=09,10&l=20&sn=product"
       storeUrl: "http://www.bandinlunis.com/front/product/detailProduct.do?prodId=%s"
       hrefUrl: "http://www.bandinlunis.com/front/product/detailBookshelf.do?prodId=%s&shopCd=%s"
+    kyobo:
+      listUrl: "http://www.kyobobook.co.kr/search/SearchCommonMain.jsp?vPstrCategory=TOT&vPstrKeyWord=%s&vPplace=top&vPstartno=%d"
+      isbnUrl: "http://www.kyobobook.co.kr/product/detailViewKor.laf?barcode=%s"
   rest:
     naver.url: "https://openapi.naver.com/v1/search/book.json?query=%s"
     kyobo:

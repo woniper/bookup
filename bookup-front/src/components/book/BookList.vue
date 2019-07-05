@@ -14,7 +14,7 @@
           <div class="col-md-8">
             <h3 class="book-title">{{ book.title }}</h3>
             <p class="book-description">{{ book.description }}</p>
-            <p class="book-description">가격 : {{ book.price }} 원</p>
+            <p class="book-description">가격 : {{ book.price }}</p>
           </div>
         </div>
         <hr>
