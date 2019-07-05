@@ -17,11 +17,11 @@ import org.springframework.util.Assert;
  */
 @Slf4j
 @Service
-public class BookFindAppService {
+public class FindBookAppService {
 
     private final BookRepository bookRepository;
 
-    public BookFindAppService(@Qualifier("kyoboBookCrawler") BookRepository bookRepository) {
+    public FindBookAppService(@Qualifier("kyoboBookCrawler") BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

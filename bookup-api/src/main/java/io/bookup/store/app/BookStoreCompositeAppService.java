@@ -1,6 +1,6 @@
 package io.bookup.store.app;
 
-import io.bookup.book.app.BookFindAppService;
+import io.bookup.book.app.FindBookAppService;
 import io.bookup.store.domain.BookStore;
 import io.bookup.store.domain.Store;
 import io.bookup.store.domain.Store.StoreType;
@@ -22,13 +22,13 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class BookStoreCompositeAppService {
 
-    private final BookFindAppService bookFindAppService;
+    private final FindBookAppService findBookAppService;
     private final List<StoreRepository> storeRepositories;
 
-    public BookStoreCompositeAppService(BookFindAppService bookFindAppService,
+    public BookStoreCompositeAppService(FindBookAppService findBookAppService,
                                         List<StoreRepository> storeRepositories) {
 
-        this.bookFindAppService = bookFindAppService;
+        this.findBookAppService = findBookAppService;
         this.storeRepositories = storeRepositories;
     }
 
@@ -41,7 +41,7 @@ public class BookStoreCompositeAppService {
         Assert.isTrue(StringUtils.isNumeric(isbn), "잘못된 isbn 입니다.");
 
         CompletableFuture<BookStore> bookFuture =
-                CompletableFuture.supplyAsync(() -> bookFindAppService.getBook(isbn))
+                CompletableFuture.supplyAsync(() -> findBookAppService.getBook(isbn))
                         .thenApplyAsync(x -> {
                             Set<StoreType> types = CollectionUtils.isEmpty(storeTypes) ? StoreType.getTypes() : storeTypes;
                             return new BookStore(x, getBookStores(isbn, types));

@@ -19,10 +19,10 @@ import static org.junit.Assert.fail;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BookFindAppServiceTest {
+public class FindBookAppServiceTest {
 
     @Autowired
-    private BookFindAppService service;
+    private FindBookAppService service;
 
     @Test(expected = IllegalArgumentException.class)
     public void getBook_null_isbn() {
