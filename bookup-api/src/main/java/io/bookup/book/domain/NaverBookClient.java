@@ -49,31 +49,24 @@ public class NaverBookClient implements BookRepository {
     public Optional<Book> findByIsbn(String isbn) {
         Optional<NaverBook> naverBook = response(isbn);
 
-        if (naverBook.isPresent()) {
-            return naverBook.get().getItems().stream()
-                    .map(this::mapBook)
-                    .collect(Collectors.toList()).stream()
-                    .findFirst();
+        return naverBook.flatMap(book -> book.getItems().stream()
+                .map(this::mapBook)
+                .collect(Collectors.toList()).stream()
+                .findFirst());
 
-        }
-
-        return Optional.empty();
     }
 
     @Override
     public Page<Book> findByTitle(String title, Pageable pageable) {
-        Optional<NaverBook> naverBookOptional = response(title, pageable);
-
-        if (naverBookOptional.isPresent()) {
-            NaverBook naverBook = naverBookOptional.get();
-            List<Book> books = naverBook.getItems().stream()
-                    .map(this::mapBook)
-                    .collect(Collectors.toList());
-
-            return new PageImpl<>(books, pageable, naverBook.getTotal());
-        }
-
-        return new PageImpl<>(Collections.emptyList());
+        return response(title, pageable)
+                .map(x -> new PageImpl<>(
+                        x.getItems().stream()
+                                .map(this::mapBook)
+                                .collect(Collectors.toList()),
+                        pageable,
+                        x.getTotal()
+                ))
+                .orElse(new PageImpl<>(Collections.emptyList()));
     }
 
     private Optional<NaverBook> response(String query, Pageable pageable) {
@@ -109,7 +102,7 @@ public class NaverBookClient implements BookRepository {
         return Optional.empty();
     }
 
-    MultiValueMap<String, String> getHeaderMap() {
+    private MultiValueMap<String, String> getHeaderMap() {
         HttpHeaders headers = new HttpHeaders();
         headers.put("X-Naver-Client-Id", Collections.singletonList(properties.getClientId()));
         headers.put("X-Naver-Client-Secret", Collections.singletonList(properties.getClientSecret()));
