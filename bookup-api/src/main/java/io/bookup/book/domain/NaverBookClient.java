@@ -157,6 +157,15 @@ public class NaverBookClient implements BookRepository {
             private String pubdate;
             private String isbn;
             private String description;
+
+            String getIsbn() {
+                if (Objects.nonNull(isbn)) {
+                    String[] split = isbn.split(" ");
+                    return split.length == 2 ? split[1] : split[0];
+                }
+
+                return null;
+            }
         }
     }
 

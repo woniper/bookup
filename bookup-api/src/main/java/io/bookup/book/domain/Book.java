@@ -1,6 +1,5 @@
 package io.bookup.book.domain;
 
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,13 +20,4 @@ public class Book {
     private String author;
     private String price;
     private String isbn;
-
-    public String getIsbn() {
-        if (Objects.nonNull(isbn)) {
-            String[] split = isbn.split(" ");
-            return split.length == 2 ? split[1] : split[0];
-        }
-
-        return null;
-    }
 }
