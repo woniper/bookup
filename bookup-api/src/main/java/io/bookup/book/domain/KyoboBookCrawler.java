@@ -1,10 +1,15 @@
 package io.bookup.book.domain;
 
 import io.bookup.book.infra.BookRepository;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -17,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author woniper
  */
+@Slf4j
 @Component
 public class KyoboBookCrawler implements BookRepository {
 
@@ -31,6 +37,11 @@ public class KyoboBookCrawler implements BookRepository {
     @Override
     public Optional<Book> findByIsbn(String isbn) {
         Element bodyElement = getBodyElement(properties.getIsbnUrl(isbn));
+
+        if (Objects.isNull(bodyElement)) {
+            return Optional.empty();
+        }
+
         Elements titleElements = bodyElement.getElementsByClass("box_detail_point");
 
         if (titleElements.isEmpty()) {
@@ -76,7 +87,14 @@ public class KyoboBookCrawler implements BookRepository {
 
     @Override
     public Page<Book> findByTitle(String title, Pageable pageable) {
-        Element bodyElement = getBodyElement(properties.getListUrl(title, pageable.getPageNumber(), pageable.getPageSize()));
+        String encodedTitle = getEncodedTitle(title);
+
+        Element bodyElement = getBodyElement(properties.getListUrl(encodedTitle, pageable.getPageNumber(), pageable.getPageSize()));
+
+        if (Objects.isNull(bodyElement)) {
+            return new PageImpl<>(Collections.emptyList());
+        }
+
         Elements bookBodyElements = bodyElement.getElementsByClass("type_list");
 
         if (bookBodyElements.isEmpty()) {
@@ -94,7 +112,7 @@ public class KyoboBookCrawler implements BookRepository {
 
         List<Book> books = booksElements.stream()
                 .map(x -> {
-                    String bookTitle =  x.getElementsByClass("title")
+                    String bookTitle = x.getElementsByClass("title")
                             .first()
                             .getElementsByTag("a")
                             .first()
@@ -110,9 +128,12 @@ public class KyoboBookCrawler implements BookRepository {
                             .getElementsByTag("a")
                             .text();
 
-                    String price = x.getElementsByClass("org_price")
-                            .first()
-                            .text();
+                    String price = Optional.ofNullable(x.getElementsByClass("org_price")
+                            .first())
+                            .map(Element::text)
+                            .orElse(x.getElementsByClass("sell_price")
+                                    .first()
+                                    .text());
 
                     String isbn = x.getElementsByClass("image")
                             .first()
@@ -131,9 +152,22 @@ public class KyoboBookCrawler implements BookRepository {
                 })
                 .collect(Collectors.toList());
 
-        long total = getTotal(bodyElement);
+        return new PageImpl<>(books, pageable, getTotal(bodyElement));
+    }
 
-        return new PageImpl<>(books, pageable, total);
+    private String getEncodedTitle(String title) {
+        StringBuilder titleStringBuilder = new StringBuilder();
+
+        for (var i = 0; i < title.length(); i++) {
+            if (title.codePointAt(i) > 127) {
+                titleStringBuilder.append("&#")
+                        .append(title.codePointAt(i))
+                        .append(";");
+            } else {
+                titleStringBuilder.append(title.charAt(i));
+            }
+        }
+        return URLEncoder.encode(titleStringBuilder.toString(), Charset.forName("UTF-8"));
     }
 
     private long getTotal(Element bodyElement) {
@@ -143,8 +177,8 @@ public class KyoboBookCrawler implements BookRepository {
                 .first()
                 .text();
 
-        int startIndex = page.indexOf("총");
-        int endIndex = page.indexOf("건");
+        int startIndex = page.indexOf('총');
+        int endIndex = page.indexOf('건');
 
         String totalString = page.substring(startIndex + 1, endIndex)
                 .replace(",", "")
@@ -154,8 +188,15 @@ public class KyoboBookCrawler implements BookRepository {
     }
 
     private Element getBodyElement(String url) {
-        String html = restTemplate.getForObject(url, String.class);
-        return Jsoup.parse(html).body();
+        try {
+            return Jsoup.connect(url)
+                    .get()
+                    .body();
+        } catch (IOException e) {
+            log.error("not crawling kyoboBook", e);
+        }
+
+        return null;
     }
 
 }

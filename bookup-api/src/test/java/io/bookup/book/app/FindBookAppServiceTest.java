@@ -48,7 +48,7 @@ public class FindBookAppServiceTest {
     @Test(expected = NotFoundBookException.class)
     public void getBook_not_found_exception() {
         // given
-        String isbn = "9788994492032123";
+        String isbn = "1238994492032";
 
         // when
         service.getBook(isbn);
