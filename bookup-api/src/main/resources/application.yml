@@ -12,7 +12,7 @@ bookup:
     naver.url: "https://openapi.naver.com/v1/search/book.json?query=%s"
     kyobo:
       url: "http://mkiosk.kyobobook.co.kr/kiosk/product/ajaxOtherStockQty.ink?site=&ejkGb=KOR&barcode=%s"
-      storeUrl: "http://mkiosk.kyobobook.co.kr/kiosk/search/searchMain.ink?site=%s&isbn=%s"
+      storeUrl: "http://mkiosk.kyobobook.co.kr/kiosk/product/detailViewMain.ink?site=%s&barcode=%s"
     library.url: "http://nl.go.kr/kolisnet/openApi/open.php?page=1&per_page=10000&search_field1=total_field&value1=%s"
 
 logging:
